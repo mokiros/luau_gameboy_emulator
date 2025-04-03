@@ -1,0 +1,46 @@
+base: luau
+name: selene_defs
+
+globals:
+  REG_A:
+    property: read-only
+  REG_B:
+    property: read-only
+  REG_C:
+    property: read-only
+  REG_D:
+    property: read-only
+  REG_E:
+    property: read-only
+  REG_H:
+    property: read-only
+  REG_L:
+    property: read-only
+  REG_HLA:
+    property: read-only
+  REG_A:
+    property: read-only
+  REG_F:
+    property: read-only
+  REG_PC:
+    property: read-only
+  REG_SP:
+    property: read-only
+  REG_STOP:
+    property: read-only
+  REG_INTERRUPTS:
+    property: read-only
+  MEMORY_ROM:
+    property: read-only
+  MEMORY_WRAM:
+    property: read-only
+  MEMORY_ERAM:
+    property: read-only
+  require:
+    args:
+      - type: string
+  vector.create:
+    args:
+      - type: number
+      - type: number
+      - type: number

@@ -1,0 +1,13 @@
+# Project place file
+/sb_luau_term.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+/sourcemap.json
+
+/out
+*.log
+
+*.code-workspace

@@ -1,0 +1,103 @@
+{
+	"rules": [
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_B",
+			"value": 1,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_C",
+			"value": 2,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_D",
+			"value": 3,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_E",
+			"value": 4,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_H",
+			"value": 5,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_L",
+			"value": 6,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_HLA",
+			"value": 7,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_A",
+			"value": 8,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_F",
+			"value": 9,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_PC",
+			"value": 10,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_SP",
+			"value": 11,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_STOP",
+			"value": 12,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "REG_INTERRUPTS",
+			"value": 13,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "MEMORY_ROM",
+			"value": 14,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "MEMORY_WRAM",
+			"value": 15,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "MEMORY_ERAM",
+			"value": 16,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "NO_BRANCHED_EXPRESSIONS",
+			"value": true,
+		},
+		{
+			"rule": "inject_global_value",
+			"identifier": "USE_BIT32",
+			"value": false,
+		},
+		"remove_types",
+		"compute_expression",
+		"remove_unused_if_branch",
+		"remove_unused_while",
+		"filter_after_early_return",
+		"remove_empty_do",
+		"remove_unused_variable",
+		"convert_index_to_field",
+		"remove_nil_declaration",
+	],
+}
