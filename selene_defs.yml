@@ -2,8 +2,6 @@ base: luau
 name: selene_defs
 
 globals:
-  REG_A:
-    property: read-only
   REG_B:
     property: read-only
   REG_C:
