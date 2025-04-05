@@ -8,19 +8,46 @@ local mmu_write8 = MMU.write8
 
 local ID: Common.InstructionSet = {}
 
-local function set_flags(state, value, is_sub)
-	state[REG_F] = (if value == 0 then 0b1000_0000 else 0)
-		+ (if is_sub then 0b0100_0000 else 0)
-		+ (if value % 0x10 == (if is_sub then 0xF else 0) then 0b0010_0000 else 0)
-		+ state[REG_F] % 0b0010_0000
+---#inline
+local function flag_z(value)
+	return if value ~= 0 then 0b0000_0000 else 0b1000_0000
 end
 
--- TODO: add _G.USE_BIT32 variant and maybe _G.NO_BRANCHED_EXPRESSIONS
+---#inline
+local function flag_h_inc(value)
+	return if _G.USE_BIT32
+		then (if bit32.band(value, 0xF) == 0 then 0b0010_0000 else 0)
+		else (if value % 0x10 == 0 then 0b0010_0000 else 0)
+end
+
+---#inline
+local function flag_h_dec(value)
+	return if _G.USE_BIT32
+		then (if bit32.band(value, 0xF) == 0xF then 0b0010_0000 else 0)
+		else (if value % 0x10 == 0xF then 0b0010_0000 else 0)
+end
+
+local flag_n = 0b0100_0000
+
+---#inline
+local function set_flags_inc(state, value)
+	state[REG_F] = if _G.USE_BIT32
+		then (bit32.bor(flag_z(value), flag_h_inc(value), bit32.band(state[REG_F], 0b0001_0000)))
+		else (flag_z(value) + flag_h_inc(value) + state[REG_F] % 0b0010_0000)
+end
+
+---#inline
+local function set_flags_dec(state, value)
+	state[REG_F] = if _G.USE_BIT32
+		then (bit32.bor(flag_z(value), flag_n, flag_h_dec(value), bit32.band(state[REG_F], 0b0001_0000)))
+		else (flag_z(value) + 0b0100_0000 + flag_h_dec(value) + state[REG_F] % 0b0010_0000)
+end
+
 ---#inline
 local function inc_reg(state, reg_idx)
-	local v = (state[reg_idx] + 1) % 256
+	local v = if _G.USE_BIT32 then bit32.band(state[reg_idx] + 1, 0xFF) else (state[reg_idx] + 1) % 256
 	state[reg_idx] = v
-	set_flags(state, v, false)
+	set_flags_inc(state, v)
 end
 
 ID[0x04] = function(state)
@@ -51,7 +78,7 @@ ID[0x34] = function(state)
 	local hl = r16(state[REG_H], state[REG_L])
 	local v = (mmu_read8(state, hl) + 1) % 256
 	mmu_write8(state, hl, v)
-	set_flags(state, v, false)
+	set_flags_inc(state, v)
 end
 
 ID[0x3C] = function(state)
@@ -62,7 +89,7 @@ end
 local function dec_reg(state, reg_idx)
 	local v = (state[reg_idx] - 1) % 256
 	state[reg_idx] = v
-	set_flags(state, v, true)
+	set_flags_dec(state, v)
 end
 
 ID[0x05] = function(state)
@@ -93,7 +120,7 @@ ID[0x35] = function(state)
 	local hl = r16(state[REG_H], state[REG_L])
 	local v = (mmu_read8(state, hl) - 1) % 256
 	mmu_write8(state, hl, v)
-	set_flags(state, v, true)
+	set_flags_dec(state, v)
 end
 
 ID[0x3D] = function(state)
