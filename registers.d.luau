@@ -43,8 +43,3 @@ export type REG_IDX =
 	| REG_F
 	| REG_PC
 	| REG_SP
-	| REG_STOP
-	| REG_INTERRUPTS
-	| MEMORY_ROM
-	| MEMORY_WRAM
-	| MEMORY_ERAM
