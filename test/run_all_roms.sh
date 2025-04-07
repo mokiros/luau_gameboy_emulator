@@ -23,6 +23,7 @@ ROMS=(
 	"11-op a,(hl)|11|7427500"
 )
 
+declare -A pid_log_map
 declare -a pids=()
 
 for ROM_ENTRY in "${ROMS[@]}"; do
@@ -34,16 +35,21 @@ for ROM_ENTRY in "${ROMS[@]}"; do
 	
 	"$DIR/run.sh" "$TEST_ROMS_DIR/${ROM_PATH}.gb" "$TEST_ID" "$CYCLE_COUNT" "$LOG_FILE" > "$OUTPUT_LOG" 2>&1 &
 	echo "/// Started ROM $TEST_ID (logging to ${OUTPUT_LOG}) with PID $!"
-	pids+=($!)
+	curr_pid=$!
+	pids+=("$curr_pid")
+	pid_log_map["$curr_pid"]="$OUTPUT_LOG"
 done
 
 # Wait for all parallel jobs to complete, check exit status
 FAILED=0
 for pid in "${pids[@]}"; do
-	wait "$pid" || {
-		echo "// !!! Error: ROM test failed for PID $pid"
+	if ! wait "$pid"; then
+		echo -e "\n/// Error: ROM test failed for PID $pid"
+		echo "=== Output log content ($pid) ==="
+		cat "${pid_log_map[$pid]}"
+		echo "=== End of log ==="
 		((FAILED++))
-	}
+	fi
 done
 
 if [ "$FAILED" -ne 0 ]; then
