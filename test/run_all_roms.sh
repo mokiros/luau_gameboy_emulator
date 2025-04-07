@@ -5,13 +5,9 @@ set -e
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 TEST_ROMS_DIR=$DIR/gb-test-roms/cpu_instrs/individual
-CONFIG_FILE="$DIR/darklua_$1.json"
 LOG_DIR="$DIR/logs"
 
 mkdir -p "$LOG_DIR"  # Ensure log directory exists
-
-echo "/// Running darklua with configuration $1"
-darklua process -c "$CONFIG_FILE" src out
 
 ROMS=(
 	"01-special|1|1256633"
@@ -54,6 +50,3 @@ if [ "$FAILED" -ne 0 ]; then
 	echo "/// Error: $FAILED ROM test(s) failed!"
 	exit 1
 fi
-
-echo "/// All ROMs passed with configuration $1"
-echo ""

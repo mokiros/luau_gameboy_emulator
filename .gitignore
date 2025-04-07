@@ -11,3 +11,5 @@
 *.log
 
 *.code-workspace
+
+/test/configs
