@@ -5,7 +5,7 @@ local stack_pop16 = Common.stack_pop16
 
 -- TODO: Just like with JP instructions, conditional
 -- instructions need to have varying amount of cycles
-local CALL: Common.InstructionSet = {}
+local CALL = Common.INSTRUCTIONS
 
 ---#inline
 local function call_n16(state)
@@ -128,4 +128,4 @@ CALL[0xFF] = function(state)
 	call_addr(state, 0x38)
 end
 
-return CALL
+return true

@@ -15,7 +15,9 @@ export type OpcodeHandler = (state: GBState) -> ()
 
 export type InstructionSet = { [Opcode]: OpcodeHandler }
 
-local Common = {} :: {
+local Common = {
+	INSTRUCTIONS = table.create(256),
+} :: {
 	r16: (number, number) -> number,
 	hli: (number, number) -> (number, number, number),
 	hld: (number, number) -> (number, number, number),
@@ -30,6 +32,8 @@ local Common = {} :: {
 	stack_push16: (state: GBState, value: number) -> (),
 	stack_pop8: (state: GBState) -> number,
 	stack_pop16: (state: GBState) -> number,
+
+	INSTRUCTIONS: InstructionSet,
 }
 
 local r16: typeof(Common.r16) = if _G.USE_BIT32

@@ -6,7 +6,7 @@ local read_n8 = Common.read_n8
 local read_hla = Common.read_hla
 local write_hla = Common.write_hla
 
-local ROTATE: Common.InstructionSet = {}
+local ROTATE = Common.INSTRUCTIONS
 
 ---#inline
 local function flag_z(value)
@@ -460,4 +460,4 @@ ROTATE[0xCB] = function(state)
 	end
 end
 
-return ROTATE
+return true

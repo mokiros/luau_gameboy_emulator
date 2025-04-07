@@ -12,9 +12,8 @@ local mmu_read8 = MMU.read8
 local mmu_write8 = MMU.write8
 local mmu_write16 = MMU.write16
 
-local ARITH = require("./arithmetic")
-
-local LD: Common.InstructionSet = {}
+local INSTRUCTIONS = Common.INSTRUCTIONS
+local LD = INSTRUCTIONS
 
 LD[0x40] = function(state)
 	state[REG_B] = state[REG_B]
@@ -388,7 +387,7 @@ end
 
 LD[0xF8] = function(state)
 	local sp = state[REG_SP]
-	ARITH[0xE8](state)
+	INSTRUCTIONS[0xE8](state)
 	state[REG_H] = bit32.rshift(state[REG_SP], 8)
 	state[REG_L] = bit32.band(state[REG_SP], 0xFF)
 	state[REG_SP] = sp
@@ -402,4 +401,4 @@ LD[0x08] = function(state)
 	mmu_write16(state, read_n16(state), state[REG_SP])
 end
 
-return LD
+return true

@@ -11,46 +11,19 @@ local Z80 = {
 	Common = Common,
 }
 
-local Instructions: Common.InstructionSet = table.create(255)
-Z80.Instructions = Instructions
+local Instructions = Common.INSTRUCTIONS
+
+require("./ld")
+require("./jp")
+require("./stack")
+require("./call")
+require("./arithmetic")
+require("./bitwise")
+require("./cp")
+require("./inc_dec")
+require("./rl_rr_cb")
 
 Instructions[0x00] = function() end
-
-for opcode, handler in require("./ld") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./jp") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./stack") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./call") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./arithmetic") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./bitwise") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./cp") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./inc_dec") do
-	Instructions[opcode] = handler
-end
-
-for opcode, handler in require("./rl_rr_cb") do
-	Instructions[opcode] = handler
-end
 
 Instructions[0x10] = function(state)
 	state[REG_STOP] = read_n8(state)

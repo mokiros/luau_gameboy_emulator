@@ -2,7 +2,7 @@ local Common = require("./common")
 local read_n8 = Common.read_n8
 local read_at_hl = Common.read_at_hl
 
-local CP: Common.InstructionSet = {}
+local CP = Common.INSTRUCTIONS
 
 local function cp_with_a(state, value)
 	local a = state[REG_A]
@@ -48,4 +48,4 @@ CP[0xFE] = function(state)
 	cp_with_a(state, read_n8(state))
 end
 
-return CP
+return true

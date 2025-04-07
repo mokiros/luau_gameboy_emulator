@@ -6,7 +6,7 @@ local MMU = require("../mmu")
 local mmu_read8 = MMU.read8
 local mmu_write8 = MMU.write8
 
-local ID: Common.InstructionSet = {}
+local ID = Common.INSTRUCTIONS
 
 ---#inline
 local function flag_z(value)
@@ -127,4 +127,4 @@ ID[0x3D] = function(state)
 	dec_reg(state, REG_A)
 end
 
-return ID
+return true

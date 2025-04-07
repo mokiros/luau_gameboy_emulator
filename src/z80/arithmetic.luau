@@ -6,7 +6,7 @@ local read_e8 = Common.read_e8
 local MMU = require("../mmu")
 local mmu_read8 = MMU.read8
 
-local ARITH: Common.InstructionSet = {}
+local ARITH = Common.INSTRUCTIONS
 
 ---#inline
 local function add_to_a(state, value)
@@ -387,4 +387,4 @@ ARITH[0xE8] = function(state)
 	state[REG_SP] = (sp + offset) % 0x10000
 end
 
-return ARITH
+return true

@@ -5,7 +5,7 @@ local read_n16 = Common.read_n16
 
 -- TODO: In some instructions, the amount of cycles is different based on
 -- whether the jump actually happened or not. Need to account for that.
-local JP: Common.InstructionSet = {}
+local JP = Common.INSTRUCTIONS
 
 JP[0xC3] = function(state)
 	state[REG_PC] = read_n16(state)
@@ -107,4 +107,4 @@ JP[0x38] = if _G.NO_BRANCHED_EXPRESSIONS
 			else 1
 	end
 
-return JP
+return true

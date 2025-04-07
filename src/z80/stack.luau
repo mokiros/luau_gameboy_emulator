@@ -5,7 +5,7 @@ local stack_push16 = Common.stack_push16
 local MMU = require("../mmu")
 local mmu_read8 = MMU.read8
 
-local STACK: Common.InstructionSet = {}
+local STACK = Common.INSTRUCTIONS
 
 STACK[0xC5] = function(state)
 	stack_push16(state, r16(state[REG_B], state[REG_C]))
@@ -49,4 +49,4 @@ STACK[0xF1] = function(state)
 	state[REG_SP] += 2
 end
 
-return STACK
+return true

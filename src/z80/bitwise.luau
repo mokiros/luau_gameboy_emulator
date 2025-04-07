@@ -2,7 +2,7 @@ local Common = require("./common")
 local read_n8 = Common.read_n8
 local read_at_hl = Common.read_at_hl
 
-local BW: Common.InstructionSet = {}
+local BW = Common.INSTRUCTIONS
 
 local function reg_a_and(state, value)
 	state[REG_A] = bit32.band(state[REG_A], value)
@@ -132,4 +132,4 @@ BW[0x2F] = function(state)
 	state[REG_F] = bit32.bor(state[REG_F], 0b0110_0000)
 end
 
-return BW
+return true
