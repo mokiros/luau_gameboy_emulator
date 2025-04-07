@@ -4,7 +4,6 @@ type GBState = GlobalCommon.GBState
 
 local MMU = require("../mmu")
 local mmu_read8 = MMU.read8
-local mmu_read8_signed = MMU.read8_signed
 local mmu_read16 = MMU.read16
 local mmu_write8 = MMU.write8
 local mmu_write16 = MMU.write16
@@ -83,7 +82,9 @@ end
 function Common.read_e8(state)
 	local PC = state[REG_PC]
 	state[REG_PC] = PC + 1
-	return mmu_read8_signed(state, PC)
+	-- TODO: figure out a way to do it without conditional logic
+	local n = mmu_read8(state, PC)
+	return if n > 127 then n - 256 else n
 end
 
 ---#inline

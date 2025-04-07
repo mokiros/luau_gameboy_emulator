@@ -2,11 +2,11 @@ local Common = require("./common")
 local Z80 = require("./z80")
 local MMU = require("./mmu")
 
-local function init(): Common.GBState
+local function init(rom: buffer): Common.GBState
 	local state = {} :: Common.GBState
 
 	Z80.init(state)
-	MMU.init(state)
+	MMU.init(state, rom)
 
 	return state
 end

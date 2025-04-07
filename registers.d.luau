@@ -1,3 +1,4 @@
+-- GBState indexes
 export type REG_B = "REG_B"
 declare REG_B: REG_B --# 1
 export type REG_C = "REG_C"
@@ -30,6 +31,16 @@ export type MEMORY_WRAM = "MEMORY_WRAM"
 declare MEMORY_WRAM: MEMORY_WRAM --# 15
 export type MEMORY_ERAM = "MEMORY_ERAM"
 declare MEMORY_ERAM: MEMORY_ERAM --# 16
+export type MEMORY_VRAM = "MEMORY_VRAM"
+declare MEMORY_VRAM: MEMORY_VRAM --# 17
+export type MEMORY_HRAM = "MEMORY_HRAM"
+declare MEMORY_HRAM: MEMORY_HRAM --# 18
+export type MBC_MODE = "MBC_MODE"
+declare MBC_MODE: MBC_MODE --# 19
+export type MBC_BANK = "MBC_BANK"
+declare MBC_BANK: MBC_BANK --# 20
+export type MBC_MASK = "MBC_MASK"
+declare MBC_MASK: MBC_MASK --# 21
 
 export type REG_IDX =
 	  REG_B
@@ -43,3 +54,31 @@ export type REG_IDX =
 	| REG_F
 	| REG_PC
 	| REG_SP
+
+-- MBC (Memory Bank Controller) indexes
+export type MBC_NONE = "MBC_NONE"
+declare MBC_NONE: MBC_NONE --# 0
+export type MBC1 = "MBC1"
+declare MBC1: MBC1 --# 1
+export type MBC2 = "MBC2"
+declare MBC2: MBC2 --# 2
+export type MBC3 = "MBC3"
+declare MBC3: MBC3 --# 3
+export type MBC4 = "MBC4"
+declare MBC4: MBC4 --# 4
+export type MBC5 = "MBC5"
+declare MBC5: MBC5 --# 5
+export type MBC6 = "MBC6"
+declare MBC6: MBC6 --# 6
+export type MBC7 = "MBC7"
+declare MBC7: MBC7 --# 7
+
+export type MBC_IDX = 
+	MBC_NONE
+	| MBC1
+	| MBC2
+	| MBC3
+	| MBC4
+	| MBC5
+	| MBC6
+	| MBC7

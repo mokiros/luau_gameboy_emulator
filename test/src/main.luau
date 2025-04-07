@@ -23,9 +23,10 @@ end
 
 local file = buffer.fromstring(fs.readFile(parsed.f))
 
-local state = GB.init() :: any
-MMU.writeROM(state, file)
-MMU.write8(state, 0xFF44, 0x90)
+local state = GB.init(file) :: any
+MMU.Common.MMU_READ[0xFF44] = function()
+	return 0x90
+end
 
 local function log_state()
 	local str = string.format(

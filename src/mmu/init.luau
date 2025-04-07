@@ -1,39 +1,49 @@
-local Common = require("../common")
+local GlobalCommon = require("../common")
+local Common = require("./common")
+
+local RAM = require("./ram")
+local ROM = require("./rom")
+
+local MMU_READ = Common.MMU_READ
+local MMU_WRITE = Common.MMU_WRITE
+
+local function u16(low, high)
+	return if _G.USE_BIT32 then bit32.bor(bit32.lshift(high, 8), low) else high * 0x100 + low
+end
+
+local function read8(state, addr)
+	return (if _G.DEBUG
+		then (MMU_READ[addr] or error(string.format("MMU error: no READ handler found for address 0x%04X", addr)))
+		else MMU_READ[addr])(state, addr)
+end
+
+local function write8(state, addr, value)
+	(if _G.DEBUG
+		then (MMU_WRITE[addr] or error(string.format("MMU error: no WRITE handler found for address 0x%04X", addr)))
+		else MMU_WRITE[addr])(state, addr, value)
+end
 
 local MMU = {
-	MEMORY_SIZE = 0x10000,
+	Common = Common,
+	read8 = read8,
+	write8 = write8,
 }
 
-function MMU.read8(state: Common.GBState, addr: number): number
-	return buffer.readu8(state[MEMORY_WRAM], addr)
+function MMU.read16(state, addr)
+	return u16(read8(state, addr), read8(state, addr + 1))
 end
 
-function MMU.read8_signed(state: Common.GBState, addr: number): number
-	return buffer.readi8(state[MEMORY_WRAM], addr)
+function MMU.write16(state: GlobalCommon.GBState, addr: number, value: number): ()
+	write8(state, addr, bit32.band(value, 0xFF))
+	write8(state, addr + 1, bit32.rshift(value, 8))
 end
 
-function MMU.read16(state: Common.GBState, addr: number): number
-	return buffer.readu16(state[MEMORY_WRAM], addr)
-end
+function MMU.init(state: GlobalCommon.GBState, rom: buffer): ()
+	state[MEMORY_WRAM] = buffer.create(RAM.WRAM_SIZE)
+	state[MEMORY_VRAM] = buffer.create(RAM.VRAM_SIZE)
+	state[MEMORY_HRAM] = buffer.create(RAM.HRAM_SIZE)
 
-function MMU.write8(state: Common.GBState, addr: number, value: number): ()
-	buffer.writeu8(state[MEMORY_WRAM], addr, value)
-end
-
-function MMU.write8_signed(state: Common.GBState, addr: number, value: number): ()
-	buffer.writeu8(state[MEMORY_WRAM], addr, value)
-end
-
-function MMU.write16(state: Common.GBState, addr: number, value: number): ()
-	buffer.writeu16(state[MEMORY_WRAM], addr, value)
-end
-
-function MMU.init(state: Common.GBState): ()
-	state[MEMORY_WRAM] = buffer.create(MMU.MEMORY_SIZE)
-end
-
-function MMU.writeROM(state: Common.GBState, rom: buffer): ()
-	buffer.copy(state[MEMORY_WRAM], 0, rom, 0, 0x8000)
+	ROM.load_rom(state, rom)
 end
 
 return MMU
