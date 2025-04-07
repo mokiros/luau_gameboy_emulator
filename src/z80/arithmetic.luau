@@ -11,17 +11,23 @@ local ARITH: Common.InstructionSet = {}
 ---#inline
 local function add_to_a(state, value)
 	local sum = state[REG_A] + value
-	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS
-		then (
+	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
+		then bit32.bor(
+			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF), 0b0001_0000), 1),
+			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4)
+		)
+		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
 			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
 			+ (state[REG_A] % 0x10 + value % 0x10) // 0x10 * 0b0010_0000
 			+ sum // 0x100 * 0b0001_0000
 		)
-		else ((if (if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 0x100) == 0 then 0b1000_0000 else 0) + (if (
-				if _G.USE_BIT32
-					then (bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF)) > 0xF
-					else (state[REG_A] % 0x10 + value % 0x10) > 0xF
-			)
+		elseif _G.USE_BIT32 then bit32.bor(
+			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			(if bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) > 0xF then 0b0010_0000 else 0),
+			(if sum > 0xFF then 0b0001_0000 else 0)
+		)
+		else ((if sum % 0x100 == 0 then 0b1000_0000 else 0) + (if state[REG_A] % 0x10 + value % 0x10 > 0xF
 			then 0b0010_0000
 			else 0) + (if sum > 0xFF then 0b0001_0000 else 0))
 
@@ -68,19 +74,24 @@ end
 local function adc_to_a(state, value)
 	local carry = (if _G.USE_BIT32 then bit32.extract(state[REG_F], 4) else (state[REG_F] // 0x10) % 2)
 	local sum = state[REG_A] + value + carry
-	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS
-		then (
+
+	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
+		then bit32.bor(
+			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) + carry, 0b0001_0000), 1),
+			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4)
+		)
+		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
 			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
 			+ (state[REG_A] % 0x10 + value % 0x10 + carry) // 0x10 * 0b0010_0000
 			+ sum // 0x100 * 0b0001_0000
 		)
-		else ((if (if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 0x100) == 0 then 0b1000_0000 else 0) + (if (
-				(
-					if _G.USE_BIT32
-						then (bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) + carry)
-						else (state[REG_A] % 0x10 + value % 0x10 + carry)
-				) > 0xF
-			)
+		elseif _G.USE_BIT32 then bit32.bor(
+			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			(if bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) + carry > 0xF then 0b0010_0000 else 0),
+			(if sum > 0xFF then 0b0001_0000 else 0)
+		)
+		else ((if sum % 0x100 == 0 then 0b1000_0000 else 0) + (if state[REG_A] % 0x10 + value % 0x10 + carry > 0xF
 			then 0b0010_0000
 			else 0) + (if sum > 0xFF then 0b0001_0000 else 0))
 
@@ -126,19 +137,32 @@ end
 ---#inline
 local function sub_from_a(state, value)
 	local sum = state[REG_A] - value
-	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS
-		then (
+
+	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
+		then bit32.bor(
+			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF), 0b0001_0000), 1),
+			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4),
+			0b0100_0000
+		)
+		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
 			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
 			+ (1 - (state[REG_A] % 0x10 - value % 0x10 + 0x10) // 0x10) * 0b0010_0000
 			+ (1 - (sum + 0x100) // 0x100) * 0b0001_0000
 			+ 0b0100_0000
 		)
-		else ((if sum == 0 then 0b1000_0000 else 0) + (if (
-				(if _G.USE_BIT32 then (bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF)) else (state[REG_A] % 16 - value % 16))
-				< 0
-			)
-			then 0b0010_0000
-			else 0) + (if sum < 0 then 0b0001_0000 else 0) + 0b0100_0000)
+		elseif _G.USE_BIT32 then bit32.bor(
+			(if sum == 0 then 0b1000_0000 else 0),
+			(if bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) < 0 then 0b0010_0000 else 0),
+			(if sum < 0 then 0b0001_0000 else 0),
+			0b0100_0000
+		)
+		else (
+			(if sum == 0 then 0b1000_0000 else 0)
+			+ (if state[REG_A] % 0x10 - value % 0x10 < 0 then 0b0010_0000 else 0)
+			+ (if sum < 0 then 0b0001_0000 else 0)
+			+ 0b0100_0000
+		)
 
 	state[REG_A] = if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 256
 end
@@ -183,20 +207,27 @@ end
 local function sbc_from_a(state, value)
 	local carry = (if _G.USE_BIT32 then bit32.extract(state[REG_F], 4) else (state[REG_F] // 0x10) % 0x2)
 	local sum = state[REG_A] - value - carry
-	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS
-		then (
+
+	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
+		then bit32.bor(
+			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) - carry, 0b0001_0000), 1),
+			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4),
+			0b0100_0000
+		)
+		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
 			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
 			+ (1 - (state[REG_A] % 0x10 - value % 0x10 - carry + 0x10) // 0x10) * 0b0010_0000
 			+ (1 - (sum + 0x100) // 0x100) * 0b0001_0000
 			+ 0b0100_0000
 		)
-		else ((if (if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 0x100) == 0 then 0b1000_0000 else 0) + (if (
-				(
-					if _G.USE_BIT32
-						then (bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) - carry)
-						else (state[REG_A] % 0x10 - value % 0x10 - carry)
-				) < 0
-			)
+		elseif _G.USE_BIT32 then bit32.bor(
+			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			(if bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) - carry < 0 then 0b0010_0000 else 0),
+			(if sum < 0 then 0b0001_0000 else 0),
+			0b0100_0000
+		)
+		else ((if sum % 256 == 0 then 0b1000_0000 else 0) + (if state[REG_A] % 0x10 - value % 0x10 - carry < 0
 			then 0b0010_0000
 			else 0) + (if sum < 0 then 0b0001_0000 else 0) + 0b0100_0000)
 
