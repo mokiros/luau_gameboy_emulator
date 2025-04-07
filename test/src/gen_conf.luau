@@ -8,6 +8,7 @@ local parsed = args.parse_args({
 	r = "string",
 	bit32 = "string",
 	branched = "string",
+	debug = "boolean",
 })
 
 local settings = {
@@ -20,6 +21,8 @@ local settings = {
 		then true
 		elseif parsed.branched == "false" then false
 		else error(`Invalid '-branched' value: {parsed.branched}`),
+
+	debug = parsed.debug,
 }
 
 local base_rules = {
@@ -51,6 +54,7 @@ end
 
 add_global("USE_BIT32", settings.bit32)
 add_global("NO_BRANCHED_EXPRESSIONS", settings.branched)
+add_global("DEBUG", settings.debug)
 
 for _, rule in base_rules do
 	table.insert(rules, rule)

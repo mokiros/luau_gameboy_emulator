@@ -1,12 +1,12 @@
 local process = require("@lune/process")
 
-export type ArgsConfig = { [string]: "number" | "string" }
+export type ArgsConfig = { [string]: "number" | "string" | "boolean" }
 
 local function parse_args(cfg: ArgsConfig): any
 	local parsed = {}
 	local i = 1
 	local n = #process.args
-	while i < n do
+	while i <= n do
 		local arg = process.args[i]
 		i += 1
 		if string.sub(arg, 1, 1) ~= "-" then
@@ -14,7 +14,10 @@ local function parse_args(cfg: ArgsConfig): any
 		end
 		local key = string.sub(arg, 2)
 		local t = cfg[key]
-		if not t then
+		if t == "boolean" then
+			parsed[key] = true
+			continue
+		elseif not t or i > n then
 			continue
 		end
 		local v = process.args[i]
@@ -27,7 +30,11 @@ local function parse_args(cfg: ArgsConfig): any
 
 	for k, v in cfg do
 		if not parsed[k] then
-			error(`Missing argument: -{k}`)
+			if v == "boolean" then
+				parsed[k] = false
+			else
+				error(`Missing argument: -{k}`)
+			end
 		end
 	end
 
