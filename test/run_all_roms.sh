@@ -36,8 +36,8 @@ for ROM_ENTRY in "${ROMS[@]}"; do
 	LOG_FILE="$LOG_DIR/${ROM_PATH}.log"
 	OUTPUT_LOG="$LOG_DIR/${ROM_PATH}.output.log"
 	
-	echo "/// Starting ROM $TEST_ID (logging to ${OUTPUT_LOG})"
 	"$DIR/run.sh" "$TEST_ROMS_DIR/${ROM_PATH}.gb" "$TEST_ID" "$CYCLE_COUNT" "$LOG_FILE" > "$OUTPUT_LOG" 2>&1 &
+	echo "/// Started ROM $TEST_ID (logging to ${OUTPUT_LOG}) with PID $!"
 	pids+=($!)
 done
 
