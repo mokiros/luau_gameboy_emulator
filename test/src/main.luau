@@ -1,3 +1,5 @@
+local fs = require("@lune/fs")
+
 local args = require("./args")
 
 local logs = require("./logs")
@@ -10,8 +12,19 @@ local MMU = GB.MMU
 local Z80 = GB.Z80
 local REG = GB.Common.REG
 
+local parsed = args.parse_args({
+	f = "string",
+	c = "number",
+})
+
+if not fs.isFile(parsed.f) then
+	error("File does not exist: " .. parsed.f)
+end
+
+local file = buffer.fromstring(fs.readFile(parsed.f))
+
 local state = GB.init() :: any
-MMU.writeROM(state, args.file)
+MMU.writeROM(state, file)
 MMU.write8(state, 0xFF44, 0x90)
 
 local function log_state()
@@ -35,7 +48,7 @@ local function log_state()
 	push_log(str)
 end
 
-local instruction_count = args.instruction_count
+local instruction_count = parsed.c
 
 log_state()
 for _ = 1, instruction_count do
