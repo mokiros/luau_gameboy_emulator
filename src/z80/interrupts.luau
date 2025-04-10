@@ -50,7 +50,7 @@ local function service_interrupt(state: GBState): boolean
 end
 
 local function raise_interrupt(state: GBState, bitmask: INT_IDX): ()
-	write8(state, 0xFF0F, bit32.band(bit32.bor(read8(state, 0xFF0F), (bitmask :: unknown) :: number), 0x1F))
+	write8(state, 0xFF0F, bit32.band(bit32.bor(read8(state, 0xFF0F), bitmask), 0x1F))
 	service_interrupt(state)
 end
 

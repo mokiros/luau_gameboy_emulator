@@ -75,6 +75,8 @@ export type REG_TMA = "REG_TMA"
 declare REG_TMA: REG_TMA --# 54
 export type REG_TAC = "REG_TAC"
 declare REG_TAC: REG_TAC --# 55
+export type TIMER_COUNTER = "TIMER_COUNTER"
+declare TIMER_COUNTER: TIMER_COUNTER --# 56
 
 export type SERIAL_VALUE = "SERIAL_VALUE"
 declare SERIAL_VALUE: SERIAL_VALUE --# 60
@@ -82,48 +84,22 @@ export type SERIAL_DATA = "SERIAL_DATA"
 declare SERIAL_DATA: SERIAL_DATA --# 61
 
 -- MBC (Memory Bank Controller) indexes
-export type MBC_NONE = "MBC_NONE"
-declare MBC_NONE: MBC_NONE --# 0
-export type MBC1 = "MBC1"
-declare MBC1: MBC1 --# 1
-export type MBC2 = "MBC2"
-declare MBC2: MBC2 --# 2
-export type MBC3 = "MBC3"
-declare MBC3: MBC3 --# 3
-export type MBC4 = "MBC4"
-declare MBC4: MBC4 --# 4
-export type MBC5 = "MBC5"
-declare MBC5: MBC5 --# 5
-export type MBC6 = "MBC6"
-declare MBC6: MBC6 --# 6
-export type MBC7 = "MBC7"
-declare MBC7: MBC7 --# 7
+declare MBC_NONE: number --# 0
+declare MBC1: number --# 1
+declare MBC2: number --# 2
+declare MBC3: number --# 3
+declare MBC4: number --# 4
+declare MBC5: number --# 5
+declare MBC6: number --# 6
+declare MBC7: number --# 7
 
-export type MBC_IDX = 
-	MBC_NONE
-	| MBC1
-	| MBC2
-	| MBC3
-	| MBC4
-	| MBC5
-	| MBC6
-	| MBC7
+export type MBC_IDX = number
 
 -- Bit masks for interrupts
-export type INT_VBLANK = "INT_VBLANK"
-declare INT_VBLANK: INT_VBLANK --# 1
-export type INT_LCD_STAT = "INT_LCD_STAT"
-declare INT_LCD_STAT: INT_LCD_STAT --# 2
-export type INT_TIMER = "INT_TIMER"
-declare INT_TIMER: INT_TIMER --# 4
-export type INT_SERIAL = "INT_SERIAL"
-declare INT_SERIAL: INT_SERIAL --# 8
-export type INT_JOYPAD = "INT_JOYPAD"
-declare INT_JOYPAD: INT_JOYPAD --# 16
+declare INT_VBLANK: number --# 1
+declare INT_LCD_STAT: number --# 2
+declare INT_TIMER: number --# 4
+declare INT_SERIAL: number --# 8
+declare INT_JOYPAD: number --# 16
 
-export type INT_IDX = 
-	INT_VBLANK
-	| INT_LCD_STAT
-	| INT_TIMER
-	| INT_SERIAL
-	| INT_JOYPAD
+export type INT_IDX = number
