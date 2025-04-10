@@ -4,13 +4,13 @@ set -e
 
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-LOGFILE="$4"
+LOGFILE="$5"
 
 echo "// Running lune"
 
 rm -f "$LOGFILE"
-lune run $DIR/src/main.luau -- -f "$1" -c $3 >> "$LOGFILE"
+lune run $DIR/src/main.luau -- -r "$1" -f "$2" -c $4 >> "$LOGFILE"
 
 echo "// Running gameboy doctor"
 
-$DIR/gameboy-doctor/gameboy-doctor "$LOGFILE" cpu_instrs $2
+$DIR/gameboy-doctor/gameboy-doctor "$LOGFILE" cpu_instrs $3

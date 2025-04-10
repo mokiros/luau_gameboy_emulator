@@ -1,25 +1,28 @@
 local fs = require("@lune/fs")
 
 local args = require("./args")
+local parse_registers = require("parse_registers")
 
 local logs = require("./logs")
 local push_log = logs.push_log
 local flush_log = logs.flush_log
 
 local GB = require("../../out")
-
 local MMU = GB.MMU
-local REG = GB.Common.REG
 
 local parsed = args.parse_args({
+	r = "string",
 	f = "string",
 	c = "number",
 })
 
 if not fs.isFile(parsed.f) then
 	error("File does not exist: " .. parsed.f)
+elseif not fs.isFile(parsed.r) then
+	error("File does not exist: " .. parsed.r)
 end
 
+local REG = parse_registers(fs.readFile(parsed.r))
 local file = buffer.fromstring(fs.readFile(parsed.f))
 
 local state = GB.init(file) :: any
