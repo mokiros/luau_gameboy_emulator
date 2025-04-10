@@ -33,20 +33,20 @@ end
 local function log_state()
 	local str = string.format(
 		"A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X\n",
-		state[REG.A],
-		state[REG.F],
-		state[REG.B],
-		state[REG.C],
-		state[REG.D],
-		state[REG.E],
-		state[REG.H],
-		state[REG.L],
-		state[REG.SP],
-		state[REG.PC],
-		MMU.read8(state, state[REG.PC] + 0),
-		MMU.read8(state, state[REG.PC] + 1),
-		MMU.read8(state, state[REG.PC] + 2),
-		MMU.read8(state, state[REG.PC] + 3)
+		state[REG.REG_A],
+		state[REG.REG_F],
+		state[REG.REG_B],
+		state[REG.REG_C],
+		state[REG.REG_D],
+		state[REG.REG_E],
+		state[REG.REG_H],
+		state[REG.REG_L],
+		state[REG.REG_SP],
+		state[REG.REG_PC],
+		MMU.read8(state, state[REG.REG_PC] + 0),
+		MMU.read8(state, state[REG.REG_PC] + 1),
+		MMU.read8(state, state[REG.REG_PC] + 2),
+		MMU.read8(state, state[REG.REG_PC] + 3)
 	)
 	push_log(str)
 end
