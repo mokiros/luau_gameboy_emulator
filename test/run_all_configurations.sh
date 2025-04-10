@@ -7,10 +7,10 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 CONFIG_DIR="$DIR/configs"
 
 CONFIGURATIONS=(
-	"bit32_branched|true|true"
-	"bit32_nobranched|true|false"
-	"nobit32_branched|false|true"
-	"nobit32_nobranched|false|false"
+	"bit32_branched|true|false"
+	"bit32_nobranched|true|true"
+	"nobit32_branched|false|false"
+	"nobit32_nobranched|false|true"
 )
 
 mkdir -p "$CONFIG_DIR"
@@ -22,7 +22,7 @@ for CONFIG_ENTRY in "${CONFIGURATIONS[@]}"; do
 
 	echo "//// Creating configuration $CONFIG"
 	CONFIG_FILE="$CONFIG_DIR/darklua_$CONFIG.json"
-	lune run "$DIR/src/gen_conf.luau" -- -r "$DIR/../registers.d.luau" -p "$CONFIG_FILE" -bit32 "$USE_BIT32" -branched $NO_BRANCHED_EXPRESSIONS -debug
+	lune run "$DIR/src/gen_conf.luau" -- -r "$DIR/../registers.d.luau" -p "$CONFIG_FILE" -bit32 "$USE_BIT32" -branched "$NO_BRANCHED_EXPRESSIONS" -debug
 
 	echo "//// Running darklua with configuration $CONFIG"
 	darklua process -c "$CONFIG_FILE" src out

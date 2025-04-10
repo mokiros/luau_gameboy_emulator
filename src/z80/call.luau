@@ -3,8 +3,9 @@ local read_n16 = Common.read_n16
 local stack_push16 = Common.stack_push16
 local stack_pop16 = Common.stack_pop16
 
--- TODO: Just like with JP instructions, conditional
--- instructions need to have varying amount of cycles
+local Interrupts = require("./interrupts")
+local service_interrupt = Interrupts.service_interrupt
+
 local CALL = Common.INSTRUCTIONS
 
 ---#inline
@@ -25,12 +26,14 @@ CALL[0xC4] = function(state)
 		state[REG_PC] += 2
 	else
 		call_n16(state)
+		state[CLOCK_M] += 3
 	end
 end
 
 CALL[0xCC] = function(state)
 	if if _G.USE_BIT32 then bit32.btest(state[REG_F], 0x80) else state[REG_F] > 127 then
 		call_n16(state)
+		state[CLOCK_M] += 3
 	else
 		state[REG_PC] += 2
 	end
@@ -41,12 +44,14 @@ CALL[0xD4] = function(state)
 		state[REG_PC] += 2
 	else
 		call_n16(state)
+		state[CLOCK_M] += 3
 	end
 end
 
 CALL[0xDC] = function(state)
 	if if _G.USE_BIT32 then bit32.btest(state[REG_F], 0x10) else (state[REG_F] % 32) > 15 then
 		call_n16(state)
+		state[CLOCK_M] += 3
 	else
 		state[REG_PC] += 2
 	end
@@ -87,7 +92,8 @@ end
 
 CALL[0xD9] = function(state)
 	ret(state)
-	state[REG_INTERRUPTS] = 1
+	state[REG_IE] = 1
+	service_interrupt(state)
 end
 
 ---#inline

@@ -8,28 +8,36 @@ local mmu_read8 = MMU.read8
 
 local ARITH = Common.INSTRUCTIONS
 
+local function flag_z(value)
+	return if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
+		then (bit32.rshift(bit32.band(bit32.bnot(bit32.band(value, 0xFF) + 0xFF), 0b1_0000_0000), 1))
+		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then ((1 - ((value % 0x100) + 0xFF) // 0x100) * 0b1000_0000)
+		elseif _G.USE_BIT32 then (if bit32.band(value, 0xFF) == 0 then 0b1000_0000 else 0)
+		else (if value % 0x100 == 0 then 0b1000_0000 else 0)
+end
+
 ---#inline
 local function add_to_a(state, value)
 	local sum = state[REG_A] + value
 	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
 		then bit32.bor(
-			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			flag_z(sum),
 			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF), 0b0001_0000), 1),
 			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4)
 		)
 		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
-			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
+			flag_z(sum)
 			+ (state[REG_A] % 0x10 + value % 0x10) // 0x10 * 0b0010_0000
 			+ sum // 0x100 * 0b0001_0000
 		)
 		elseif _G.USE_BIT32 then bit32.bor(
-			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			flag_z(sum),
 			(if bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) > 0xF then 0b0010_0000 else 0),
 			(if sum > 0xFF then 0b0001_0000 else 0)
 		)
-		else ((if sum % 0x100 == 0 then 0b1000_0000 else 0) + (if state[REG_A] % 0x10 + value % 0x10 > 0xF
-			then 0b0010_0000
-			else 0) + (if sum > 0xFF then 0b0001_0000 else 0))
+		else (flag_z(sum) + (if state[REG_A] % 0x10 + value % 0x10 > 0xF then 0b0010_0000 else 0) + (if sum > 0xFF
+			then 0b0001_0000
+			else 0))
 
 	state[REG_A] = if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 0x100
 end
@@ -77,23 +85,24 @@ local function adc_to_a(state, value)
 
 	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
 		then bit32.bor(
-			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			flag_z(sum),
 			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) + carry, 0b0001_0000), 1),
 			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4)
 		)
 		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
-			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
+			flag_z(sum)
 			+ (state[REG_A] % 0x10 + value % 0x10 + carry) // 0x10 * 0b0010_0000
 			+ sum // 0x100 * 0b0001_0000
 		)
 		elseif _G.USE_BIT32 then bit32.bor(
-			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			flag_z(sum),
 			(if bit32.band(state[REG_A], 0xF) + bit32.band(value, 0xF) + carry > 0xF then 0b0010_0000 else 0),
 			(if sum > 0xFF then 0b0001_0000 else 0)
 		)
-		else ((if sum % 0x100 == 0 then 0b1000_0000 else 0) + (if state[REG_A] % 0x10 + value % 0x10 + carry > 0xF
-			then 0b0010_0000
-			else 0) + (if sum > 0xFF then 0b0001_0000 else 0))
+		else (flag_z(sum) + (if state[REG_A] % 0x10 + value % 0x10 + carry > 0xF then 0b0010_0000 else 0) + (if sum
+				> 0xFF
+			then 0b0001_0000
+			else 0))
 
 	state[REG_A] = if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 0x100
 end
@@ -140,29 +149,26 @@ local function sub_from_a(state, value)
 
 	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
 		then bit32.bor(
-			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			flag_z(sum),
 			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF), 0b0001_0000), 1),
 			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4),
 			0b0100_0000
 		)
 		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
-			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
+			flag_z(sum)
 			+ (1 - (state[REG_A] % 0x10 - value % 0x10 + 0x10) // 0x10) * 0b0010_0000
 			+ (1 - (sum + 0x100) // 0x100) * 0b0001_0000
 			+ 0b0100_0000
 		)
 		elseif _G.USE_BIT32 then bit32.bor(
-			(if sum == 0 then 0b1000_0000 else 0),
+			flag_z(sum),
 			(if bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) < 0 then 0b0010_0000 else 0),
 			(if sum < 0 then 0b0001_0000 else 0),
 			0b0100_0000
 		)
-		else (
-			(if sum == 0 then 0b1000_0000 else 0)
-			+ (if state[REG_A] % 0x10 - value % 0x10 < 0 then 0b0010_0000 else 0)
-			+ (if sum < 0 then 0b0001_0000 else 0)
-			+ 0b0100_0000
-		)
+		else (flag_z(sum) + (if state[REG_A] % 0x10 - value % 0x10 < 0 then 0b0010_0000 else 0) + (if sum < 0
+			then 0b0001_0000
+			else 0) + 0b0100_0000)
 
 	state[REG_A] = if _G.USE_BIT32 then bit32.band(sum, 0xFF) else sum % 256
 end
@@ -210,19 +216,19 @@ local function sbc_from_a(state, value)
 
 	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
 		then bit32.bor(
-			bit32.rshift(bit32.band(bit32.bnot(bit32.band(sum, 0xFF) + 0xFF), 0b1_0000_0000), 1),
+			flag_z(sum),
 			bit32.lshift(bit32.band(bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) - carry, 0b0001_0000), 1),
 			bit32.rshift(bit32.band(sum, 0b1_0000_0000), 4),
 			0b0100_0000
 		)
 		elseif _G.NO_BRANCHED_EXPRESSIONS and not _G.USE_BIT32 then (
-			(1 - ((sum % 0x100) + 0xFF) // 0x100) * 0b1000_0000
+			flag_z(sum)
 			+ (1 - (state[REG_A] % 0x10 - value % 0x10 - carry + 0x10) // 0x10) * 0b0010_0000
 			+ (1 - (sum + 0x100) // 0x100) * 0b0001_0000
 			+ 0b0100_0000
 		)
 		elseif _G.USE_BIT32 then bit32.bor(
-			(if bit32.band(sum, 0xFF) == 0 then 0b1000_0000 else 0),
+			flag_z(sum),
 			(if bit32.band(state[REG_A], 0xF) - bit32.band(value, 0xF) - carry < 0 then 0b0010_0000 else 0),
 			(if sum < 0 then 0b0001_0000 else 0),
 			0b0100_0000
@@ -294,12 +300,8 @@ ARITH[0x27] = function(state)
 
 	state[REG_A] = if _G.USE_BIT32 then bit32.band(a, 0xFF) else a % 256
 	state[REG_F] = if _G.USE_BIT32
-		then bit32.bor(
-			if a == 0 or a == 256 then 0x80 else 0,
-			bit32.band(f, 0x40),
-			if a > 0xFF or a < 0 then 0x10 else bit32.lshift(c, 4)
-		)
-		else (if a == 0 or a == 256 then 0x80 else 0) + n * 0x40 + (if a > 0xFF or a < 0 then 0x10 else c * 0x10)
+		then bit32.bor(flag_z(a), bit32.band(f, 0x40), if a > 0xFF or a < 0 then 0x10 else bit32.lshift(c, 4))
+		else flag_z(a) + n * 0x40 + (if a > 0xFF or a < 0 then 0x10 else c * 0x10)
 end
 
 ---#inline

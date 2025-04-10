@@ -9,7 +9,6 @@ local flush_log = logs.flush_log
 local GB = require("../../out")
 
 local MMU = GB.MMU
-local Z80 = GB.Z80
 local REG = GB.Common.REG
 
 local parsed = args.parse_args({
@@ -53,11 +52,8 @@ local instruction_count = parsed.c
 
 log_state()
 for _ = 1, instruction_count do
-	Z80.run(state, 1)
+	GB.step(state)
 	log_state()
-	if state[REG.STOP] >= 0 then
-		break
-	end
 end
 
 flush_log()
