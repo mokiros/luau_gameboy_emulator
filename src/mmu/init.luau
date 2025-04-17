@@ -6,6 +6,7 @@ type GBState = GlobalCommon.GBState
 local RAM = require("./ram")
 local ROM = require("./rom")
 local _SERIAL = require("./serial")
+local _TIMER = require("./timer")
 
 local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
