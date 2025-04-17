@@ -42,9 +42,9 @@ declare REG_HALT: REG_HALT --# 21
 export type REG_IME = "REG_IME"
 declare REG_IME: REG_IME --# 26
 export type REG_IE = "REG_IE"
-declare REG_IE: REG_IE --# 26
+declare REG_IE: REG_IE --# 27
 export type REG_IF = "REG_IF"
-declare REG_IF: REG_IF --# 27
+declare REG_IF: REG_IF --# 28
 
 export type MEMORY_ROM = "MEMORY_ROM"
 declare MEMORY_ROM: MEMORY_ROM --# 30
