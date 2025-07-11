@@ -78,8 +78,18 @@ local function load_rom(state: GlobalCommon.GBState, rom: buffer)
 		error(`Invalid ROM size: {rom_size}`)
 	end
 
-	local mbc_mode = buffer.readu8(rom, 0x0147)
-	state[MBC_MODE] = MBC_MAPPINGS[mbc_mode] or MBC_MAPPINGS[0x00]
+	local mbc_header = buffer.readu8(rom, 0x0147)
+	local mbc_mode = MBC_MAPPINGS[mbc_header]
+
+	if not state[MBC_MODE] then
+		error(`Invalid MBC mode at address 0x0147: {mbc_header}`)
+	end
+
+	state[MBC_MODE] = mbc_mode
+
+	if not MBC_READ[mbc_mode] or not MBC_WRITE[mbc_mode] then
+		error(`FIXME: implement MBC mode {mbc_mode}`)
+	end
 
 	local mask_bits = size_bits - 13
 	state[MBC_MASK] = 2 ^ mask_bits - 1
