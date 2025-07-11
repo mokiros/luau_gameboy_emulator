@@ -18,6 +18,7 @@ local Z80 = {
 
 local Instructions = Common.INSTRUCTIONS
 
+-- HACK: These are side effects. They probably shouldn't be.
 require("./ld")
 require("./jp")
 require("./stack")
