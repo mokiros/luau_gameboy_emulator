@@ -49,12 +49,11 @@ Instructions[0x76] = function(state)
 end
 
 Instructions[0xF3] = function(state)
-	state[REG_IE] = 0
+	state[REG_IME] = false
 end
 
 Instructions[0xFB] = function(state)
-	state[REG_IE] = 1
-	service_interrupt(state)
+	state[REG_IME_PENDING] = true
 end
 
 function Z80.init(state: GBState): ()
@@ -81,9 +80,16 @@ function Z80.init(state: GBState): ()
 end
 
 function Z80.step(state: GBState)
+	service_interrupt(state)
+
 	if state[REG_HALT] then
 		state[CLOCK_M] += 1
 		return
+	end
+
+	if state[REG_IME_PENDING] then
+		state[REG_IME] = true
+		state[REG_IME_PENDING] = false
 	end
 
 	local opcode = mmu_read8(state, state[REG_PC])

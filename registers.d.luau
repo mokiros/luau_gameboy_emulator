@@ -39,6 +39,8 @@ declare REG_STOP: REG_STOP --# 20
 export type REG_HALT = "REG_HALT"
 declare REG_HALT: REG_HALT --# 21
 
+export type REG_IME_PENDING = "REG_IME_PENDING"
+declare REG_IME_PENDING: REG_IME_PENDING --# 25
 export type REG_IME = "REG_IME"
 declare REG_IME: REG_IME --# 26
 export type REG_IE = "REG_IE"

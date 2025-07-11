@@ -3,9 +3,6 @@ local read_n16 = Common.read_n16
 local stack_push16 = Common.stack_push16
 local stack_pop16 = Common.stack_pop16
 
-local Interrupts = require("./interrupts")
-local service_interrupt = Interrupts.service_interrupt
-
 local CALL = Common.INSTRUCTIONS
 
 ---#inline
@@ -91,9 +88,8 @@ CALL[0xD8] = function(state)
 end
 
 CALL[0xD9] = function(state)
+	state[REG_IME] = true
 	ret(state)
-	state[REG_IE] = 1
-	service_interrupt(state)
 end
 
 ---#inline
