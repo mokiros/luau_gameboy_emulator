@@ -5,14 +5,15 @@ set -e
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 REGISTERS_FILE="$1"
+CONFIG_NAME="$2"
 TEST_ROMS_DIR=$DIR/gb-test-roms/cpu_instrs/individual
-LOG_DIR="$DIR/logs"
+LOG_DIR="$DIR/logs/$CONFIG_NAME"
 
 mkdir -p "$LOG_DIR"  # Ensure log directory exists
 
 ROMS=(
 	"01-special|1|1256633"
-	# "02-interrupts|2|0"  # Disabled
+	"02-interrupts|2|162070"
 	"03-op sp,hl|3|1066160"
 	"04-op r,imm|4|1260504"
 	"05-op rp|5|1761126"
@@ -34,7 +35,7 @@ for ROM_ENTRY in "${ROMS[@]}"; do
 	LOG_FILE="$LOG_DIR/${ROM_PATH}.log"
 	OUTPUT_LOG="$LOG_DIR/${ROM_PATH}.output.log"
 	
-	"$DIR/run.sh" "$1" "$TEST_ROMS_DIR/${ROM_PATH}.gb" "$TEST_ID" "$CYCLE_COUNT" "$LOG_FILE" > "$OUTPUT_LOG" 2>&1 &
+	"$DIR/run.sh" "$1" "$TEST_ROMS_DIR/${ROM_PATH}.gb" "$TEST_ID" "$CYCLE_COUNT" "$LOG_FILE" "$CONFIG_NAME" > "$OUTPUT_LOG" 2>&1 &
 	echo "/// Started ROM $TEST_ID (logging to ${OUTPUT_LOG}) with PID $!"
 	curr_pid=$!
 	pids+=("$curr_pid")

@@ -17,6 +17,7 @@ CONFIGURATIONS=(
 
 mkdir -p "$CONFIG_DIR"
 
+PIDS=()
 for CONFIG_ENTRY in "${CONFIGURATIONS[@]}"; do
 	[[ "$CONFIG_ENTRY" == \#* ]] && continue
 
@@ -26,14 +27,28 @@ for CONFIG_ENTRY in "${CONFIGURATIONS[@]}"; do
 	CONFIG_FILE="$CONFIG_DIR/darklua_$CONFIG.json"
 	lune run "$DIR/src/gen_conf.luau" -- -r "$REGISTERS_FILE" -p "$CONFIG_FILE" -bit32 "$USE_BIT32" -branched "$NO_BRANCHED_EXPRESSIONS" -debug
 
+	mkdir -p "out/$CONFIG"
+
 	echo "//// Running darklua with configuration $CONFIG"
-	darklua process -c "$CONFIG_FILE" src out
+	darklua process -c "$CONFIG_FILE" src "out/$CONFIG"
 
 	echo "//// Running with configuration $CONFIG"
-	$DIR/run_all_roms.sh "$REGISTERS_FILE"
-	echo "//// All ROMs passed with configuration $CONFIG"
-	echo ""
+	(
+		"$DIR/run_all_roms.sh" "$REGISTERS_FILE" "$CONFIG"
+		echo "//// All ROMs passed with configuration $CONFIG"
+	) &
+	PIDS+=($!)
 done
+
+FAIL=0
+for PID in "${PIDS[@]}"; do
+	wait $PID || FAIL=1
+done
+
+if [[ $FAIL -ne 0 ]]; then
+	echo "Some configurations failed."
+	exit 1
+fi
 
 echo ""
 echo "//// All tests passed!"

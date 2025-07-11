@@ -9,7 +9,7 @@ LOGFILE="$5"
 echo "// Running lune"
 
 rm -f "$LOGFILE"
-lune run $DIR/src/main.luau -- -r "$1" -f "$2" -c $4 >> "$LOGFILE"
+lune run $DIR/src/main.luau -- -r "$1" -f "$2" -c $4 -config "$6" >> "$LOGFILE"
 
 echo "// Running gameboy doctor"
 
