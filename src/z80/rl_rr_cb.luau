@@ -446,7 +446,7 @@ ROTATE[0xCB] = function(state)
 	local cb_opcode = read_n8(state)
 	if cb_opcode < 0x40 then
 		CB[cb_opcode](state)
-		return
+		return cb_opcode
 	end
 	local op = bit32.rshift(cb_opcode, 6)
 	local bit_idx = bit32.rshift(bit32.band(cb_opcode, 0b00_111_000), 3)
@@ -458,6 +458,7 @@ ROTATE[0xCB] = function(state)
 	else
 		BIT_OPS[op](state, reg_idx, bit_idx)
 	end
+	return cb_opcode
 end
 
 return true

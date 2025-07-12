@@ -1,6 +1,7 @@
 local GlobalCommon = require("../common")
 local CONST_BUFFERS = require("../buffers")
 local INSTRUCTION_TIMINGS_MCYCLE = CONST_BUFFERS.INSTRUCTION_TIMINGS_MCYCLE
+local CB_PREFIXED_INSTRUCTION_TIMINGS_MCYCLE = CONST_BUFFERS.CB_PREFIXED_INSTRUCTION_TIMINGS_MCYCLE
 
 local Common = require("./common")
 
@@ -100,9 +101,11 @@ function Z80.step(state: GBState): number
 		end
 	end
 
-	Instructions[opcode](state)
+	local cb_opcode: number | nil = Instructions[opcode](state)
 
-	return buffer.readu8(INSTRUCTION_TIMINGS_MCYCLE, opcode)
+	local cb_timing = if cb_opcode then buffer.readu8(CB_PREFIXED_INSTRUCTION_TIMINGS_MCYCLE, cb_opcode) else 0
+
+	return buffer.readu8(INSTRUCTION_TIMINGS_MCYCLE, opcode) + cb_timing
 end
 
 return Z80
