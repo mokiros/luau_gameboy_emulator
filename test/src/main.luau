@@ -52,7 +52,7 @@ local function make_log_line(state)
 		state[REG.REG_IF],
 		state[REG.REG_HALT] and "T" or "F",
 		state[REG.CLOCK_M],
-		state[REG.TIMER_COUNTER],
+		state[REG.TIMA_COUNTER],
 		state[REG.REG_DIV],
 		state[REG.REG_TIMA],
 		state[REG.REG_TMA],

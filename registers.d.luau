@@ -79,8 +79,8 @@ export type REG_TMA = "REG_TMA"
 declare REG_TMA: REG_TMA --# 54
 export type REG_TAC = "REG_TAC"
 declare REG_TAC: REG_TAC --# 55
-export type TIMER_COUNTER = "TIMER_COUNTER"
-declare TIMER_COUNTER: TIMER_COUNTER --# 56
+export type TIMA_COUNTER = "TIMA_COUNTER"
+declare TIMA_COUNTER: TIMA_COUNTER --# 56
 
 export type SERIAL_VALUE = "SERIAL_VALUE"
 declare SERIAL_VALUE: SERIAL_VALUE --# 60

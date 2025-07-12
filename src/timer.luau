@@ -4,12 +4,12 @@ type GBState = Common.GBState
 local Interrupts = require("./z80/interrupts")
 local raise_interrupt = Interrupts.raise_interrupt
 
--- Timer frequencies (in T-cycles)
+-- Timer frequencies (in M-cycles)
 local TIMER_FREQUENCIES = {
-	[0b00] = 0b10_0000_0000,
-	[0b01] = 0b1_0000,
-	[0b10] = 0b100_0000,
-	[0b11] = 0b1_0000_0000,
+	[0b00] = 256,
+	[0b01] = 4,
+	[0b10] = 16,
+	[0b11] = 64,
 }
 
 local function init(state: GBState)
@@ -19,33 +19,28 @@ local function init(state: GBState)
 	state[REG_TIMA] = 0
 	state[REG_TMA] = 0
 	state[REG_TAC] = 0
-	state[TIMER_COUNTER] = 0
+	state[TIMA_COUNTER] = 0
 end
 
 local function step(state: GBState, mcycles: number)
 	state[CLOCK_M] += mcycles
-	local prev_counter = state[TIMER_COUNTER]
-	local tcycles = mcycles * 4
-	local counter = bit32.band(prev_counter + tcycles, 0xFFFF)
+	state[REG_DIV] += mcycles
 
+	local tma_counter = state[TIMA_COUNTER] + mcycles
+
+	-- TODO: Test for correctness
 	if bit32.band(state[REG_TAC], 0b100) ~= 0 then
 		local freq = TIMER_FREQUENCIES[bit32.band(state[REG_TAC], 0b11)]
-		local new_cycles = prev_counter % freq + tcycles
-		local remaining = (0x100 - state[REG_TIMA]) * freq
+		state[REG_TIMA] += tma_counter // freq
+		tma_counter %= freq
 
-		if new_cycles >= remaining then
-			state[REG_TIMA] = state[REG_TMA]
-			local extra_cycles = new_cycles - remaining
-			counter -= extra_cycles
-			state[CLOCK_M] -= extra_cycles // 4
+		while state[REG_TIMA] > 0xFF do
 			raise_interrupt(state, INT_TIMER)
-		else
-			state[REG_TIMA] += new_cycles // freq
+			state[REG_TIMA] = state[REG_TIMA] - 0x100 + state[REG_TMA]
 		end
 	end
 
-	state[REG_DIV] = bit32.rshift(counter, 8)
-	state[TIMER_COUNTER] = counter
+	state[TIMA_COUNTER] = tma_counter
 end
 
 return {
