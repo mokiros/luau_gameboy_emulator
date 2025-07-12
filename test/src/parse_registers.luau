@@ -8,7 +8,7 @@ local function parse_registers(file: string)
 			continue
 		end
 		local idx = string.match(line, "--#%s*(%d+)")
-		t[key] = idx or counter
+		t[key] = if idx then tonumber(idx) else counter
 		if not idx then
 			counter += 1
 		end
