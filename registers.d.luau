@@ -1,26 +1,26 @@
 -- GBState indexes
 export type REG_B = "REG_B"
-declare REG_B: REG_B --# 1
+declare REG_B: REG_B
 export type REG_C = "REG_C"
-declare REG_C: REG_C --# 2
+declare REG_C: REG_C
 export type REG_D = "REG_D"
-declare REG_D: REG_D --# 3
+declare REG_D: REG_D
 export type REG_E = "REG_E"
-declare REG_E: REG_E --# 4
+declare REG_E: REG_E
 export type REG_H = "REG_H"
-declare REG_H: REG_H --# 5
+declare REG_H: REG_H
 export type REG_L = "REG_L"
-declare REG_L: REG_L --# 6
+declare REG_L: REG_L
 export type REG_HLA = "REG_HLA"
-declare REG_HLA: REG_HLA --# 7
+declare REG_HLA: REG_HLA
 export type REG_A = "REG_A"
-declare REG_A: REG_A --# 8
+declare REG_A: REG_A
 export type REG_F = "REG_F"
-declare REG_F: REG_F --# 9
+declare REG_F: REG_F
 export type REG_PC = "REG_PC"
-declare REG_PC: REG_PC --# 10
+declare REG_PC: REG_PC
 export type REG_SP = "REG_SP"
-declare REG_SP: REG_SP --# 11
+declare REG_SP: REG_SP
 export type REG_IDX =
 	  REG_B
 	| REG_C
@@ -35,57 +35,57 @@ export type REG_IDX =
 	| REG_SP
 
 export type REG_STOP = "REG_STOP"
-declare REG_STOP: REG_STOP --# 20
+declare REG_STOP: REG_STOP
 export type REG_HALT = "REG_HALT"
-declare REG_HALT: REG_HALT --# 21
+declare REG_HALT: REG_HALT
 
 export type REG_IME_PENDING = "REG_IME_PENDING"
-declare REG_IME_PENDING: REG_IME_PENDING --# 25
+declare REG_IME_PENDING: REG_IME_PENDING
 export type REG_IME = "REG_IME"
-declare REG_IME: REG_IME --# 26
+declare REG_IME: REG_IME
 export type REG_IE = "REG_IE"
-declare REG_IE: REG_IE --# 27
+declare REG_IE: REG_IE
 export type REG_IF = "REG_IF"
-declare REG_IF: REG_IF --# 28
+declare REG_IF: REG_IF
 
 export type MEMORY_ROM = "MEMORY_ROM"
-declare MEMORY_ROM: MEMORY_ROM --# 30
+declare MEMORY_ROM: MEMORY_ROM
 export type MEMORY_WRAM = "MEMORY_WRAM"
-declare MEMORY_WRAM: MEMORY_WRAM --# 31
+declare MEMORY_WRAM: MEMORY_WRAM
 export type MEMORY_ERAM = "MEMORY_ERAM"
-declare MEMORY_ERAM: MEMORY_ERAM --# 32
+declare MEMORY_ERAM: MEMORY_ERAM
 export type MEMORY_VRAM = "MEMORY_VRAM"
-declare MEMORY_VRAM: MEMORY_VRAM --# 33
+declare MEMORY_VRAM: MEMORY_VRAM
 export type MEMORY_HRAM = "MEMORY_HRAM"
-declare MEMORY_HRAM: MEMORY_HRAM --# 34
+declare MEMORY_HRAM: MEMORY_HRAM
 export type MBC_MODE = "MBC_MODE"
-declare MBC_MODE: MBC_MODE --# 35
+declare MBC_MODE: MBC_MODE
 export type MBC_BANK = "MBC_BANK"
-declare MBC_BANK: MBC_BANK --# 36
+declare MBC_BANK: MBC_BANK
 export type MBC_MASK = "MBC_MASK"
-declare MBC_MASK: MBC_MASK --# 37
+declare MBC_MASK: MBC_MASK
 export type BIOS_BANK = "BIOS_BANK"
-declare BIOS_BANK: BIOS_BANK --# 39
+declare BIOS_BANK: BIOS_BANK
 
 export type CLOCK_M = "CLOCK_M"
-declare CLOCK_M: CLOCK_M --# 50
+declare CLOCK_M: CLOCK_M
 export type TARGET_CLOCK_M = "TARGET_CLOCK_M"
-declare TARGET_CLOCK_M: TARGET_CLOCK_M --# 51
+declare TARGET_CLOCK_M: TARGET_CLOCK_M
 export type REG_DIV = "REG_DIV"
-declare REG_DIV: REG_DIV --# 52
+declare REG_DIV: REG_DIV
 export type REG_TIMA = "REG_TIMA"
-declare REG_TIMA: REG_TIMA --# 53
+declare REG_TIMA: REG_TIMA
 export type REG_TMA = "REG_TMA"
-declare REG_TMA: REG_TMA --# 54
+declare REG_TMA: REG_TMA
 export type REG_TAC = "REG_TAC"
-declare REG_TAC: REG_TAC --# 55
+declare REG_TAC: REG_TAC
 export type TIMA_COUNTER = "TIMA_COUNTER"
-declare TIMA_COUNTER: TIMA_COUNTER --# 56
+declare TIMA_COUNTER: TIMA_COUNTER
 
 export type SERIAL_VALUE = "SERIAL_VALUE"
-declare SERIAL_VALUE: SERIAL_VALUE --# 60
+declare SERIAL_VALUE: SERIAL_VALUE
 export type SERIAL_DATA = "SERIAL_DATA"
-declare SERIAL_DATA: SERIAL_DATA --# 61
+declare SERIAL_DATA: SERIAL_DATA
 
 -- MBC (Memory Bank Controller) indexes
 declare MBC_NONE: number --# 0
