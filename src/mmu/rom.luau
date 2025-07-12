@@ -18,11 +18,11 @@ MBC_READ[MBC_NONE] = rom_read_16kb
 MBC_WRITE[MBC_NONE] = Common.noop
 
 MBC_READ[MBC1] = function(state, addr)
-	return rom_read_16kb(state, bit32.bor(bit32.lshift(state[MBC_BANK], 14), bit32.band(addr, 0x1FFF)))
+	return rom_read_16kb(state, bit32.bor(bit32.lshift(state[MBC_BANK], 14), bit32.band(addr, 0x3FFF)))
 end
 
-MBC_WRITE[MBC1] = function(state, addr)
-	state[MBC_BANK] = math.max(1, bit32.band(addr, state[MBC_MASK]))
+MBC_WRITE[MBC1] = function(state, _, value)
+	state[MBC_BANK] = math.max(1, bit32.band(value, state[MBC_MASK]))
 end
 
 local function rom_read_mbc(state, addr)
@@ -113,6 +113,7 @@ local function load_rom(state: GlobalCommon.GBState, rom: buffer)
 
 	local mask_bits = size_bits - 13
 	state[MBC_MASK] = 2 ^ mask_bits - 1
+	print(`Selected MBC mode {mbc_mode}, size_bits: {size_bits}, mask: {state[MBC_MASK]}`)
 
 	state[MEMORY_ROM] = rom
 	state[MBC_BANK] = 1
