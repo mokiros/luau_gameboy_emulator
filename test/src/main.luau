@@ -32,7 +32,7 @@ end
 
 local function make_log_line(state)
 	return string.format(
-		"A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X IME:%s IE:%02X, IF:%02X HALT:%s CLOCK_M:%07d TIMER_COUNTER:%04X DIV:%02X TIMA:%02X TMA:%02X TAC:%02X\n",
+		"A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X IME:%s IE:%02X, IF:%02X HALT:%s CLOCK_M:%07d TIMER_COUNTER:%04X DIV:%02X TIMA:%02X TMA:%02X TAC:%02X BIOS:%02X\n",
 		state[REG.REG_A],
 		state[REG.REG_F],
 		state[REG.REG_B],
@@ -56,7 +56,8 @@ local function make_log_line(state)
 		state[REG.REG_DIV],
 		state[REG.REG_TIMA],
 		state[REG.REG_TMA],
-		state[REG.REG_TAC]
+		state[REG.REG_TAC],
+		state[REG.BIOS_BANK]
 	)
 end
 
@@ -71,14 +72,22 @@ end
 
 local instruction_count = parsed.c
 
+local BIOS_BANK = REG.BIOS_BANK
+
 local startTime = os.clock()
 
-log_state(state)
-for i = 1, instruction_count do
+local i = 0
+while i <= instruction_count do
 	local halt = state[REG.REG_HALT]
 	GB.step(state)
-	if not halt or (halt and not state[REG.REG_HALT]) then
-		log_state(state)
+	-- do not log during halt (but do log when going into or coming out of halt)
+	local halt_log = not halt or (halt and not state[REG.REG_HALT])
+	-- also do not log during BIOS state
+	if state[BIOS_BANK] > 0 then
+		i += 1
+		if halt_log then
+			log_state(state)
+		end
 	end
 end
 

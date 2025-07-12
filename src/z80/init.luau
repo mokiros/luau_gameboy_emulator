@@ -58,16 +58,16 @@ Instructions[0xFB] = function(state)
 end
 
 function Z80.init(state: GBState): ()
-	state[REG_A] = 0x01
+	state[REG_A] = 0x00
 	state[REG_B] = 0x00
-	state[REG_C] = 0x13
+	state[REG_C] = 0x00
 	state[REG_D] = 0x00
-	state[REG_E] = 0xD8
-	state[REG_H] = 0x01
-	state[REG_L] = 0x4D
-	state[REG_F] = 0b1011_0000
+	state[REG_E] = 0x00
+	state[REG_H] = 0x00
+	state[REG_L] = 0x00
+	state[REG_F] = 0x00
 	state[REG_SP] = 0xFFFE
-	state[REG_PC] = 0x0100
+	state[REG_PC] = 0x0000
 
 	state[REG_HALT] = false
 	state[REG_STOP] = false

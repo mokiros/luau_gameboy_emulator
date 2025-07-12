@@ -1,6 +1,9 @@
 local GlobalCommon = require("../common")
 local Common = require("./common")
 
+local Buffers = require("../buffers")
+local BIOS_ROM = Buffers.BIOS_ROM
+
 local ROM_READ = Common.MMU_READ
 local ROM_WRITE = Common.MMU_WRITE
 
@@ -30,7 +33,24 @@ local function rom_write_mbc(state, addr, value)
 	MBC_WRITE[state[MBC_MODE]](state, addr, value)
 end
 
-for addr = 0x0000, 0x3FFF do
+local function read_bios_or_rom(state, addr)
+	local selected_rom = if state[BIOS_BANK] == 0 then BIOS_ROM else state[MEMORY_ROM]
+	return buffer.readu8(selected_rom, addr)
+end
+
+ROM_READ[0xFF50] = function(state, _)
+	return state[BIOS_BANK]
+end
+
+ROM_WRITE[0xFF50] = function(state, _, value)
+	state[BIOS_BANK] = value
+end
+
+for addr = 0x0000, 0x00FF do
+	ROM_READ[addr] = read_bios_or_rom
+end
+
+for addr = 0x0100, 0x3FFF do
 	ROM_READ[addr] = rom_read_16kb
 end
 
@@ -81,7 +101,7 @@ local function load_rom(state: GlobalCommon.GBState, rom: buffer)
 	local mbc_header = buffer.readu8(rom, 0x0147)
 	local mbc_mode = MBC_MAPPINGS[mbc_header]
 
-	if not state[MBC_MODE] then
+	if not mbc_mode then
 		error(`Invalid MBC mode at address 0x0147: {mbc_header}`)
 	end
 
@@ -96,6 +116,8 @@ local function load_rom(state: GlobalCommon.GBState, rom: buffer)
 
 	state[MEMORY_ROM] = rom
 	state[MBC_BANK] = 1
+
+	state[BIOS_BANK] = 0
 end
 
 return {

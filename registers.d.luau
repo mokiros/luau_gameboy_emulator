@@ -64,6 +64,8 @@ export type MBC_BANK = "MBC_BANK"
 declare MBC_BANK: MBC_BANK --# 36
 export type MBC_MASK = "MBC_MASK"
 declare MBC_MASK: MBC_MASK --# 37
+export type BIOS_BANK = "BIOS_BANK"
+declare BIOS_BANK: BIOS_BANK --# 39
 
 export type CLOCK_M = "CLOCK_M"
 declare CLOCK_M: CLOCK_M --# 50
