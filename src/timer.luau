@@ -13,6 +13,8 @@ local TIMER_FREQUENCIES = {
 }
 
 local function init(state: GBState)
+	state[CLOCK_M] = 0
+	state[TARGET_CLOCK_M] = 0
 	state[REG_DIV] = 0
 	state[REG_TIMA] = 0
 	state[REG_TMA] = 0
@@ -21,6 +23,7 @@ local function init(state: GBState)
 end
 
 local function step(state: GBState, mcycles: number)
+	state[CLOCK_M] += mcycles
 	local prev_counter = state[TIMER_COUNTER]
 	local tcycles = mcycles * 4
 	local counter = bit32.band(prev_counter + tcycles, 0xFFFF)

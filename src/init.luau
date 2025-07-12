@@ -18,9 +18,8 @@ local function init(rom: buffer): GBState
 end
 
 local function step(state: GBState): ()
-	local cycles = state[CLOCK_M]
-	Z80_step(state)
-	Timer.step(state, state[CLOCK_M] - cycles)
+	local cycles = Z80_step(state)
+	Timer.step(state, cycles)
 end
 
 local function run(state: GBState): ()

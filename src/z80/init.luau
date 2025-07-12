@@ -75,17 +75,13 @@ function Z80.init(state: GBState): ()
 	state[REG_IME] = false
 	state[REG_IE] = 0
 	state[REG_IF] = 0
-
-	state[CLOCK_M] = 0
-	state[TARGET_CLOCK_M] = 0
 end
 
-function Z80.step(state: GBState)
+function Z80.step(state: GBState): number
 	service_interrupt(state)
 
 	if state[REG_HALT] then
-		state[CLOCK_M] += 1
-		return
+		return 1
 	end
 
 	if state[REG_IME_PENDING] then
@@ -106,7 +102,7 @@ function Z80.step(state: GBState)
 
 	Instructions[opcode](state)
 
-	state[CLOCK_M] += buffer.readu8(INSTRUCTION_TIMINGS_MCYCLE, opcode)
+	return buffer.readu8(INSTRUCTION_TIMINGS_MCYCLE, opcode)
 end
 
 return Z80
