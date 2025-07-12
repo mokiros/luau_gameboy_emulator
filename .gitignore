@@ -13,3 +13,4 @@
 *.code-workspace
 
 /test/configs
+/test/out

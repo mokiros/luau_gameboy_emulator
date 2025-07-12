@@ -13,7 +13,7 @@ local parsed = args.parse_args({
 })
 
 -- `require` is put into parentheses to avoid "Unknown require" linter error
-local GB = (require)(`../../out/{parsed.config}`)
+local GB = (require)(`../out/{parsed.config}`)
 local MMU = GB.MMU
 
 if not fs.isFile(parsed.f) then
