@@ -5,11 +5,6 @@ type GBState = GlobalCommon.GBState
 local Common = require("./common")
 local stack_push16 = Common.stack_push16
 
-local MMU_Common = require("../mmu/common")
-
-local MMU_READ = MMU_Common.MMU_READ
-local MMU_WRITE = MMU_Common.MMU_WRITE
-
 local Interrupts = {}
 
 local function service_interrupt(state: GBState): boolean
@@ -52,21 +47,5 @@ end
 
 Interrupts.service_interrupt = service_interrupt
 Interrupts.raise_interrupt = raise_interrupt
-
-MMU_READ[0xFF0F] = function(state, _)
-	return state[REG_IF]
-end
-
-MMU_WRITE[0xFF0F] = function(state, _, value)
-	state[REG_IF] = bit32.band(value, 0x1F)
-end
-
-MMU_READ[0xFFFF] = function(state, _)
-	return state[REG_IE]
-end
-
-MMU_WRITE[0xFFFF] = function(state, _, value)
-	state[REG_IE] = value
-end
 
 return Interrupts
