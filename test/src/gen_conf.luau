@@ -2,6 +2,7 @@ local fs = require("@lune/fs")
 local net = require("@lune/net")
 
 local args = require("./args")
+local parse_registers = require("parse_registers")
 
 local parsed = args.parse_args({
 	p = "string",
@@ -47,8 +48,9 @@ local function add_global(reg, idx)
 end
 
 local registers_file = fs.readFile(parsed.r)
+local REG = parse_registers(registers_file)
 
-for reg, idx in string.gmatch(registers_file, "declare ([^:]+)[^-]+--#%s*(%d+)") do
+for reg, idx in REG do
 	add_global(reg, tonumber(idx))
 end
 
