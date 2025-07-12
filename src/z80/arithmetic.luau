@@ -3,7 +3,7 @@ local r16 = Common.r16
 local read_n8 = Common.read_n8
 local read_e8 = Common.read_e8
 
-local MMU = require("../mmu")
+local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 
 local ARITH = Common.INSTRUCTIONS

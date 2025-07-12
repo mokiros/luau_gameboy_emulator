@@ -2,7 +2,7 @@ local Common = require("./common")
 local REG_A = REG_A
 local r16 = Common.r16
 
-local MMU = require("../mmu")
+local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 local mmu_write8 = MMU.write8
 

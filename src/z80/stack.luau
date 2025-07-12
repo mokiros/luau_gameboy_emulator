@@ -2,7 +2,7 @@ local Common = require("./common")
 local r16 = Common.r16
 local stack_push16 = Common.stack_push16
 
-local MMU = require("../mmu")
+local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 
 local STACK = Common.INSTRUCTIONS

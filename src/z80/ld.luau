@@ -7,7 +7,7 @@ local read_n16 = Common.read_n16
 local read_at_hl = Common.read_at_hl
 local write_at_hl = Common.write_at_hl
 
-local MMU = require("../mmu")
+local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 local mmu_write8 = MMU.write8
 local mmu_write16 = MMU.write16
