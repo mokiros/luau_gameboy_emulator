@@ -1,8 +1,7 @@
 local Common = require("./common")
 type GBState = Common.GBState
 
-local Interrupts = require("./z80/interrupts")
-local raise_interrupt = Interrupts.raise_interrupt
+local raise_interrupt = Common.raise_interrupt
 
 -- Timer frequencies (in M-cycles)
 local TIMER_FREQUENCIES = {

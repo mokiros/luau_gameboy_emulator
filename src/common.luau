@@ -36,4 +36,10 @@ export type GBState = any
 -- 	TARGET_CLOCK_M: number,
 -- }
 
-return {}
+local function raise_interrupt(state: GBState, bitmask: INT_IDX): ()
+	state[REG_IF] = bit32.bor(state[REG_IF], bitmask)
+end
+
+return {
+	raise_interrupt = raise_interrupt,
+}

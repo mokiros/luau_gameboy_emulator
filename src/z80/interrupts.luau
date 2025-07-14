@@ -41,11 +41,6 @@ local function service_interrupt(state: GBState): boolean
 	return true
 end
 
-local function raise_interrupt(state: GBState, bitmask: INT_IDX): ()
-	state[REG_IF] = bit32.bor(state[REG_IF], bitmask)
-end
-
 Interrupts.service_interrupt = service_interrupt
-Interrupts.raise_interrupt = raise_interrupt
 
 return Interrupts
