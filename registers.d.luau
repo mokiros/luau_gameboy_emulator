@@ -89,6 +89,31 @@ declare SERIAL_VALUE: SERIAL_VALUE
 export type SERIAL_DATA = "SERIAL_DATA"
 declare SERIAL_DATA: SERIAL_DATA
 
+-- PPU related indexes
+export type SCREEN_BUFFER = "SCREEN_BUFFER"
+declare SCREEN_BUFFER: SCREEN_BUFFER
+export type PPU_MODECLOCK = "PPU_MODECLOCK"
+declare PPU_MODECLOCK: PPU_MODECLOCK
+export type PPU_MODE = "PPU_MODE"
+declare PPU_MODE: PPU_MODE
+export type PPU_LY = "PPU_LY"
+declare PPU_LY: PPU_LY
+export type PPU_LYC = "PPU_LYC"
+declare PPU_LYC: PPU_LYC
+export type PPU_LCDC = "PPU_LCDC"
+declare PPU_LCDC: PPU_LCDC
+export type PPU_SCY = "PPU_SCY"
+declare PPU_SCY: PPU_SCY
+export type PPU_SCX = "PPU_SCX"
+declare PPU_SCX: PPU_SCX
+export type PPU_STAT = "PPU_STAT"
+declare PPU_STAT: PPU_STAT
+
+declare PPU_MODE_HBLANK: number --# 0
+declare PPU_MODE_VBLANK: number --# 1
+declare PPU_MODE_OAM_SCAN: number --# 2
+declare PPU_MODE_DRAWING: number --# 3
+
 -- MBC (Memory Bank Controller) indexes
 declare MBC_NONE: number --# 0
 declare MBC1: number --# 1

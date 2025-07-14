@@ -23,9 +23,6 @@ local REG = parse_registers(fs.readFile(parsed.r))
 local file = buffer.fromstring(fs.readFile(parsed.f))
 
 local state = GB.init(file) :: any
-MMU.Common.MMU_READ[0xFF44] = function()
-	return 0x90
-end
 
 local SERIAL_VALUE = REG.SERIAL_VALUE
 local reachedEnd = false

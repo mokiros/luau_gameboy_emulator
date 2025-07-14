@@ -8,6 +8,7 @@ local ROM = require("./rom")
 local _SERIAL = require("./serial")
 local _TIMER = require("./timer")
 local _INTERRUPTS = require("./interrupts")
+local _PPU = require("./ppu")
 
 local MMU = {
 	Common = Common,
