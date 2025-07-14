@@ -9,6 +9,7 @@ local _SERIAL = require("./serial")
 local _TIMER = require("./timer")
 local _INTERRUPTS = require("./interrupts")
 local _PPU = require("./ppu")
+local _AUDIO = require("./audio")
 
 local MMU = {
 	Common = Common,
