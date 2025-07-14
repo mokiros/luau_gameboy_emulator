@@ -46,4 +46,5 @@ return {
 	WRAM_SIZE = 2 ^ 13,
 	VRAM_SIZE = 2 ^ 13,
 	HRAM_SIZE = 127,
+	OAM_SIZE = 160,
 }

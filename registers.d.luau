@@ -58,6 +58,8 @@ export type MEMORY_VRAM = "MEMORY_VRAM"
 declare MEMORY_VRAM: MEMORY_VRAM
 export type MEMORY_HRAM = "MEMORY_HRAM"
 declare MEMORY_HRAM: MEMORY_HRAM
+export type MEMORY_OAM = "MEMORY_OAM"
+declare MEMORY_OAM: MEMORY_OAM
 export type MBC_MODE = "MBC_MODE"
 declare MBC_MODE: MBC_MODE
 export type MBC_BANK = "MBC_BANK"

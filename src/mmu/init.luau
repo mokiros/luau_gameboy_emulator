@@ -17,6 +17,7 @@ function MMU.init(state: GBState, rom: buffer): ()
 	state[MEMORY_WRAM] = buffer.create(RAM.WRAM_SIZE)
 	state[MEMORY_VRAM] = buffer.create(RAM.VRAM_SIZE)
 	state[MEMORY_HRAM] = buffer.create(RAM.HRAM_SIZE)
+	state[MEMORY_OAM] = buffer.create(RAM.OAM_SIZE)
 
 	state[SERIAL_VALUE] = 0
 	state[SERIAL_DATA] = ""
