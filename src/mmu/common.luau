@@ -13,8 +13,8 @@ local function read_noop()
 end
 local function noop() end
 
-local MMU_READ = table.create(0x10000, read_noop) :: MemoryReadHandlers
-local MMU_WRITE = table.create(0x10000, noop) :: MemoryWriteHandlers
+local MMU_READ = table.create(0x10000, if _G.DEBUG then nil else read_noop) :: MemoryReadHandlers
+local MMU_WRITE = table.create(0x10000, if _G.DEBUG then nil else noop) :: MemoryWriteHandlers
 
 local function u16(low: number, high: number): number
 	return if _G.USE_BIT32 then bit32.bor(bit32.lshift(high, 8), low) else high * 0x100 + low
