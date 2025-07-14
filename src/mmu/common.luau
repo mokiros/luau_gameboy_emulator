@@ -9,7 +9,7 @@ export type MemoryReadHandlers = { [number]: MemoryReadHandler }
 export type MemoryWriteHandlers = { [number]: MemoryWriteHandler }
 
 local function read_noop()
-	return 0
+	return 0xFF
 end
 local function noop() end
 
