@@ -1,6 +1,11 @@
 local GlobalCommon = require("../common")
 local Common = require("./common")
 
+local MMU_READ = Common.MMU_READ
+local MMU_WRITE = Common.MMU_WRITE
+local read_noop = Common.read_noop
+local noop = Common.noop
+
 type GBState = GlobalCommon.GBState
 
 local RAM = require("./ram")
@@ -14,6 +19,12 @@ local _AUDIO = require("./audio")
 local MMU = {
 	Common = Common,
 }
+
+-- Gameboy Color CPU speed switches
+MMU_READ[0xFF4C] = read_noop
+MMU_WRITE[0xFF4C] = noop
+MMU_READ[0xFF4D] = read_noop
+MMU_WRITE[0xFF4D] = noop
 
 function MMU.init(state: GBState, rom: buffer): ()
 	state[MEMORY_WRAM] = buffer.create(RAM.WRAM_SIZE)
