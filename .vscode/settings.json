@@ -5,5 +5,19 @@
 	"luau-lsp.sourcemap.enabled": false,
 	"luau-lsp.types.definitionFiles": [
 		"./registers.d.luau"
-	]
+	],
+	"todo-tree.filtering.includeGlobs": [
+		"**/src/**/*.*",
+		"**/test/src/**/*.*"
+	],
+	"todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.)|--)\\s*($TAGS)",
+	"todo-tree.filtering.useBuiltInExcludes": "none",
+	"todo-tree.filtering.ignoreGitSubmodules": true,
+	"luau-lsp.platform.type": "standard",
+	"luau-lsp.require.useOriginalRequireByStringSemantics": true,
+	"luau-lsp.ignoreGlobs": [
+		"**/_Index/**",
+		"out/**",
+		"test/out/**"
+	],
 }
