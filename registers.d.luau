@@ -108,6 +108,16 @@ export type PPU_SCX = "PPU_SCX"
 declare PPU_SCX: PPU_SCX
 export type PPU_STAT = "PPU_STAT"
 declare PPU_STAT: PPU_STAT
+export type PPU_WY = "PPU_WY"
+declare PPU_WY: PPU_WY
+export type PPU_WX = "PPU_WX"
+declare PPU_WX: PPU_WX
+export type PPU_BGP = "PPU_BGP"
+declare PPU_BGP: PPU_BGP
+export type PPU_OBP0 = "PPU_OBP0"
+declare PPU_OBP0: PPU_OBP0
+export type PPU_OBP1 = "PPU_OBP1"
+declare PPU_OBP1: PPU_OBP1
 
 declare PPU_MODE_HBLANK: number --# 0
 declare PPU_MODE_VBLANK: number --# 1

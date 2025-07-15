@@ -54,4 +54,44 @@ MMU_WRITE[0xFF46] = function(state, _, value)
 	-- TODO: Block memory access during DMA
 end
 
+MMU_READ[0xFF47] = function(state)
+	return state[PPU_BGP]
+end
+
+MMU_WRITE[0xFF47] = function(state, _, value)
+	state[PPU_BGP] = value
+end
+
+MMU_READ[0xFF48] = function(state)
+	return state[PPU_OBP0]
+end
+
+MMU_WRITE[0xFF48] = function(state, _, value)
+	state[PPU_OBP0] = value
+end
+
+MMU_READ[0xFF49] = function(state)
+	return state[PPU_OBP1]
+end
+
+MMU_WRITE[0xFF49] = function(state, _, value)
+	state[PPU_OBP1] = value
+end
+
+MMU_READ[0xFF4A] = function(state)
+	return state[PPU_WY]
+end
+
+MMU_WRITE[0xFF4A] = function(state, _, value)
+	state[PPU_WY] = value
+end
+
+MMU_READ[0xFF4B] = function(state)
+	return state[PPU_WX]
+end
+
+MMU_WRITE[0xFF4B] = function(state, _, value)
+	state[PPU_WX] = value
+end
+
 return {}

@@ -20,6 +20,11 @@ function PPU.init(state: GBState)
 	state[PPU_LCDC] = 0
 	state[PPU_SCY] = 0
 	state[PPU_SCX] = 0
+	state[PPU_BGP] = 0
+	state[PPU_OBP0] = 0
+	state[PPU_OBP1] = 0
+	state[PPU_WX] = 0
+	state[PPU_WY] = 0
 end
 
 local function render_scanline(state: GBState)
