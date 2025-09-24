@@ -14,7 +14,6 @@
 	"todo-tree.filtering.useBuiltInExcludes": "none",
 	"todo-tree.filtering.ignoreGitSubmodules": true,
 	"luau-lsp.platform.type": "standard",
-	"luau-lsp.require.useOriginalRequireByStringSemantics": true,
 	"luau-lsp.ignoreGlobs": [
 		"**/_Index/**",
 		"out/**",

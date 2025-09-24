@@ -1,5 +1,5 @@
-local GlobalCommon = require("../common")
-local Common = require("./common")
+local GlobalCommon = require("./common")
+local Common = require("@self/common")
 
 local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
@@ -8,13 +8,13 @@ local noop = Common.noop
 
 type GBState = GlobalCommon.GBState
 
-local RAM = require("./ram")
-local ROM = require("./rom")
-local _SERIAL = require("./serial")
-local _TIMER = require("./timer")
-local _INTERRUPTS = require("./interrupts")
-local _PPU = require("./ppu")
-local _AUDIO = require("./audio")
+local RAM = require("@self/ram")
+local ROM = require("@self/rom")
+local _SERIAL = require("@self/serial")
+local _TIMER = require("@self/timer")
+local _INTERRUPTS = require("@self/interrupts")
+local _PPU = require("@self/ppu")
+local _AUDIO = require("@self/audio")
 
 local MMU = {
 	Common = Common,

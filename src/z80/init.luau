@@ -1,16 +1,16 @@
-local GlobalCommon = require("../common")
-local CONST_BUFFERS = require("../buffers")
+local GlobalCommon = require("./common")
+local CONST_BUFFERS = require("./buffers")
 local INSTRUCTION_TIMINGS_MCYCLE = CONST_BUFFERS.INSTRUCTION_TIMINGS_MCYCLE
 local CB_PREFIXED_INSTRUCTION_TIMINGS_MCYCLE = CONST_BUFFERS.CB_PREFIXED_INSTRUCTION_TIMINGS_MCYCLE
 
-local Common = require("./common")
+local Common = require("@self/common")
 
 type GBState = GlobalCommon.GBState
 
-local MMU = require("../mmu/common")
+local MMU = require("./mmu/common")
 local mmu_read8 = MMU.read8
 
-local Interrupts = require("./interrupts")
+local Interrupts = require("@self/interrupts")
 local service_interrupt = Interrupts.service_interrupt
 
 local Z80 = {
@@ -20,15 +20,15 @@ local Z80 = {
 local Instructions = Common.INSTRUCTIONS
 
 -- HACK: These are side effects. They probably shouldn't be.
-require("./ld")
-require("./jp")
-require("./stack")
-require("./call")
-require("./arithmetic")
-require("./bitwise")
-require("./cp")
-require("./inc_dec")
-require("./rl_rr_cb")
+require("@self/ld")
+require("@self/jp")
+require("@self/stack")
+require("@self/call")
+require("@self/arithmetic")
+require("@self/bitwise")
+require("@self/cp")
+require("@self/inc_dec")
+require("@self/rl_rr_cb")
 
 Instructions[0x00] = function() end
 

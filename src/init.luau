@@ -1,8 +1,8 @@
-local Common = require("./common")
-local Z80 = require("./z80")
-local MMU = require("./mmu")
-local PPU = require("./ppu")
-local Timer = require("./timer")
+local Common = require("@self/common")
+local Z80 = require("@self/z80")
+local MMU = require("@self/mmu")
+local PPU = require("@self/ppu")
+local Timer = require("@self/timer")
 
 type GBState = Common.GBState
 

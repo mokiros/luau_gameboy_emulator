@@ -1,5 +1,5 @@
-local GlobalCommon = require("../common")
-local Common = require("./common")
+local GlobalCommon = require("./common")
+local Common = require("@self/common")
 
 type GBState = GlobalCommon.GBState
 
