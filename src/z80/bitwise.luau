@@ -6,7 +6,11 @@ local BW = Common.INSTRUCTIONS
 
 local function reg_a_and(state, value)
 	state[REG_A] = bit32.band(state[REG_A], value)
-	state[REG_F] = if state[REG_A] == 0 then 0b1010_0000 else 0b0010_0000
+	state[REG_F] = (
+		if _G.NO_BRANCHED_EXPRESSIONS
+			then (1 - (state[REG_A] + 255) // 256) * 0b1000_0000
+			else if state[REG_A] == 0 then 0b1000_0000 else 0
+	) + 0b0010_0000
 end
 
 BW[0xA0] = function(state)
