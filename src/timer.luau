@@ -26,20 +26,20 @@ local function step(state: GBState, mcycles: number)
 	state[REG_DIV] += mcycles
 
 	local tma_counter = state[TIMA_COUNTER] + mcycles
+	local freq = TIMER_FREQUENCIES[bit32.band(state[REG_TAC], 0b11)]
+	local overflow_freq = tma_counter // freq
+	state[TIMA_COUNTER] = tma_counter % freq
 
 	-- TODO: Test for correctness
 	if bit32.band(state[REG_TAC], 0b100) ~= 0 then
-		local freq = TIMER_FREQUENCIES[bit32.band(state[REG_TAC], 0b11)]
-		state[REG_TIMA] += tma_counter // freq
-		tma_counter %= freq
+		state[REG_TIMA] += overflow_freq
 
+		-- TODO: This can be done without a loop
 		while state[REG_TIMA] > 0xFF do
 			raise_interrupt(state, INT_TIMER)
 			state[REG_TIMA] = state[REG_TIMA] - 0x100 + state[REG_TMA]
 		end
 	end
-
-	state[TIMA_COUNTER] = tma_counter
 end
 
 return {
