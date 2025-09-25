@@ -4,7 +4,8 @@
 	"luau-lsp.sourcemap.autogenerate": false,
 	"luau-lsp.sourcemap.enabled": false,
 	"luau-lsp.types.definitionFiles": [
-		"./registers.d.luau"
+		"./registers.d.luau",
+		"./globals.d.luau"
 	],
 	"todo-tree.filtering.includeGlobs": [
 		"**/src/**/*.*",
