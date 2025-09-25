@@ -5,15 +5,12 @@ type GBState = GlobalCommon.GBState
 
 local raise_interrupt = GlobalCommon.raise_interrupt
 
-local PPU = {
-	Common = Common,
-	SCREEN_WIDTH = 160,
-	SCREEN_HEIGHT = 144,
-	BYTES_PER_PIXEL = 4,
-}
+local PPU_SCREEN_WIDTH = 160
+local PPU_SCREEN_HEIGHT = 144
+local PPU_BYTES_PER_PIXEL = 4
 
-function PPU.init(state: GBState)
-	state[SCREEN_BUFFER] = buffer.create(PPU.SCREEN_WIDTH * PPU.SCREEN_HEIGHT * PPU.BYTES_PER_PIXEL)
+function ppu_init(state: GBState)
+	state[SCREEN_BUFFER] = buffer.create(PPU_SCREEN_WIDTH * PPU_SCREEN_HEIGHT * PPU_BYTES_PER_PIXEL)
 	state[PPU_MODECLOCK] = 0
 	state[PPU_MODE] = 0
 	state[PPU_LY] = 0
@@ -52,7 +49,7 @@ local MODE_TIMINGS = {
 	[PPU_MODE_DRAWING] = 172,
 }
 
-function PPU.step(state: GBState, tcycles: number)
+function ppu_step(state: GBState, tcycles: number)
 	local clock = state[PPU_MODECLOCK] + tcycles
 
 	local mode = state[PPU_MODE]
@@ -90,4 +87,11 @@ function PPU.step(state: GBState, tcycles: number)
 	state[PPU_MODECLOCK] = clock
 end
 
-return PPU
+return {
+	Common = Common,
+	SCREEN_WIDTH = PPU_SCREEN_WIDTH,
+	SCREEN_HEIGHT = PPU_SCREEN_HEIGHT,
+	BYTES_PER_PIXEL = PPU_BYTES_PER_PIXEL,
+	init = ppu_init,
+	step = ppu_step,
+}

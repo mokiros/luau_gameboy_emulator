@@ -11,7 +11,7 @@ local TIMER_FREQUENCIES = {
 	[0b11] = 64,
 }
 
-local function init(state: GBState)
+local function timer_init(state: GBState)
 	state[CLOCK_M] = 0
 	state[TARGET_CLOCK_M] = 0
 	state[REG_DIV] = 0
@@ -21,7 +21,7 @@ local function init(state: GBState)
 	state[TIMA_COUNTER] = 0
 end
 
-local function step(state: GBState, mcycles: number)
+local function timer_step(state: GBState, mcycles: number)
 	state[CLOCK_M] += mcycles
 	state[REG_DIV] += mcycles
 
@@ -43,6 +43,6 @@ local function step(state: GBState, mcycles: number)
 end
 
 return {
-	init = init,
-	step = step,
+	init = timer_init,
+	step = timer_step,
 }

@@ -16,17 +16,13 @@ local _INTERRUPTS = require("@self/interrupts")
 local _PPU = require("@self/ppu")
 local _AUDIO = require("@self/audio")
 
-local MMU = {
-	Common = Common,
-}
-
 -- Gameboy Color CPU speed switches
 MMU_READ[0xFF4C] = read_noop
 MMU_WRITE[0xFF4C] = noop
 MMU_READ[0xFF4D] = read_noop
 MMU_WRITE[0xFF4D] = noop
 
-function MMU.init(state: GBState, rom: buffer): ()
+function mmu_init(state: GBState, rom: buffer): ()
 	state[MEMORY_WRAM] = buffer.create(RAM.WRAM_SIZE)
 	state[MEMORY_VRAM] = buffer.create(RAM.VRAM_SIZE)
 	state[MEMORY_HRAM] = buffer.create(RAM.HRAM_SIZE)
@@ -38,4 +34,7 @@ function MMU.init(state: GBState, rom: buffer): ()
 	ROM.load_rom(state, rom)
 end
 
-return MMU
+return {
+	Common = Common,
+	init = mmu_init,
+}

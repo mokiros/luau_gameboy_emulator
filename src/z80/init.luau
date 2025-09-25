@@ -13,10 +13,6 @@ local mmu_read8 = MMU.read8
 local Interrupts = require("@self/interrupts")
 local service_interrupt = Interrupts.service_interrupt
 
-local Z80 = {
-	Common = Common,
-}
-
 local Instructions = Common.INSTRUCTIONS
 
 -- HACK: These are side effects. They probably shouldn't be.
@@ -58,7 +54,7 @@ Instructions[0xFB] = function(state)
 	state[REG_IME_PENDING] = true
 end
 
-function Z80.init(state: GBState): ()
+function z80_init(state: GBState): ()
 	state[REG_A] = 0x00
 	state[REG_B] = 0x00
 	state[REG_C] = 0x00
@@ -78,7 +74,7 @@ function Z80.init(state: GBState): ()
 	state[REG_IF] = 0
 end
 
-function Z80.step(state: GBState): number
+function z80_step(state: GBState): number
 	service_interrupt(state)
 
 	if state[REG_HALT] then
@@ -108,4 +104,8 @@ function Z80.step(state: GBState): number
 	return buffer.readu8(INSTRUCTION_TIMINGS_MCYCLE, opcode) + cb_timing
 end
 
-return Z80
+return {
+	Common = Common,
+	init = z80_init,
+	step = z80_step,
+}
