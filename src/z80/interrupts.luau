@@ -1,5 +1,4 @@
 local GlobalCommon = require("../common")
-
 type GBState = GlobalCommon.GBState
 
 local Common = require("./common")

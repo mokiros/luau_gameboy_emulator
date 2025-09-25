@@ -1,8 +1,9 @@
 local Common = require("./common")
 local read_n8 = Common.read_n8
 local read_at_hl = Common.read_at_hl
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
-local BW = Common.INSTRUCTIONS
+local BW = INSTRUCTIONS
 
 local function reg_a_and(state, value)
 	state[REG_A] = bit32.band(state[REG_A], value)

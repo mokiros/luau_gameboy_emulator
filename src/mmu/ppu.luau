@@ -1,5 +1,4 @@
 local Common = require("./common")
-
 local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
 local read8 = Common.read8

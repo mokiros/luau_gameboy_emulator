@@ -5,10 +5,10 @@ local Common = require("./common")
 local read_n8 = Common.read_n8
 local read_hla = Common.read_hla
 local write_hla = Common.write_hla
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
-local ROTATE = Common.INSTRUCTIONS
+local ROTATE = INSTRUCTIONS
 
----#inline
 local function flag_z(value)
 	return if value ~= 0 then 0b0000_0000 else 0b1000_0000
 end

@@ -1,14 +1,18 @@
 local GlobalCommon = require("../common")
+type GBState = GlobalCommon.GBState
+
 local Common = require("./common")
+local MMU_READ = Common.MMU_READ
+local MMU_WRITE = Common.MMU_WRITE
+
+type MemoryReadHandler = Common.MemoryReadHandler
+type MemoryWriteHandler = Common.MemoryWriteHandler
 
 local Buffers = require("../buffers")
 local BIOS_ROM = Buffers.BIOS_ROM
 
-local ROM_READ = Common.MMU_READ
-local ROM_WRITE = Common.MMU_WRITE
-
-local MBC_READ: { [MBC_IDX]: Common.MemoryReadHandler } = {}
-local MBC_WRITE: { [MBC_IDX]: Common.MemoryWriteHandler } = {}
+local MBC_READ: { [MBC_IDX]: MemoryReadHandler } = {}
+local MBC_WRITE: { [MBC_IDX]: MemoryWriteHandler } = {}
 
 local function rom_read_16kb(state, addr)
 	return buffer.readu8(state[MEMORY_ROM], addr)
@@ -38,24 +42,24 @@ local function read_bios_or_rom(state, addr)
 	return buffer.readu8(selected_rom, addr)
 end
 
-ROM_READ[0xFF50] = function(state, _)
+MMU_READ[0xFF50] = function(state, _)
 	return state[BIOS_BANK]
 end
 
-ROM_WRITE[0xFF50] = function(state, _, value)
+MMU_WRITE[0xFF50] = function(state, _, value)
 	state[BIOS_BANK] = value
 end
 
 for addr = 0x0000, 0x00FF do
-	ROM_READ[addr] = read_bios_or_rom
+	MMU_READ[addr] = read_bios_or_rom
 end
 
 for addr = 0x0100, 0x3FFF do
-	ROM_READ[addr] = rom_read_16kb
+	MMU_READ[addr] = rom_read_16kb
 end
 
 for addr = 0x4000, 0x7FFF do
-	ROM_READ[addr] = rom_read_mbc
+	MMU_READ[addr] = rom_read_mbc
 end
 
 local function ram_enable()
@@ -63,11 +67,11 @@ local function ram_enable()
 end
 
 for addr = 0x0000, 0x1FFF do
-	ROM_WRITE[addr] = ram_enable
+	MMU_WRITE[addr] = ram_enable
 end
 
 for addr = 0x2000, 0x3FFF do
-	ROM_WRITE[addr] = rom_write_mbc
+	MMU_WRITE[addr] = rom_write_mbc
 end
 
 local MBC_MAPPINGS: { [number]: MBC_IDX } = {
@@ -90,7 +94,7 @@ local MBC_MAPPINGS: { [number]: MBC_IDX } = {
 	[0x1E] = MBC5,
 }
 
-local function load_rom(state: GlobalCommon.GBState, rom: buffer)
+local function load_rom(state: GBState, rom: buffer)
 	local rom_size = buffer.len(rom)
 	local size_bits = math.log(rom_size, 2)
 

@@ -1,9 +1,8 @@
 local GlobalCommon = require("./common")
-local Common = require("@self/common")
-
+local raise_interrupt = GlobalCommon.raise_interrupt
 type GBState = GlobalCommon.GBState
 
-local raise_interrupt = GlobalCommon.raise_interrupt
+local Common = require("@self/common")
 
 local PPU_SCREEN_WIDTH = 160
 local PPU_SCREEN_HEIGHT = 144

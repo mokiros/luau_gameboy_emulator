@@ -2,8 +2,9 @@ local Common = require("./common")
 local r16 = Common.r16
 local read_e8 = Common.read_e8
 local read_n16 = Common.read_n16
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
-local JP = Common.INSTRUCTIONS
+local JP = INSTRUCTIONS
 
 local function read_n16_nobranched(state, flag: number): number
 	state[CLOCK_M] += flag

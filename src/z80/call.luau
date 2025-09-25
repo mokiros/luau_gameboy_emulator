@@ -2,10 +2,10 @@ local Common = require("./common")
 local read_n16 = Common.read_n16
 local stack_push16 = Common.stack_push16
 local stack_pop16 = Common.stack_pop16
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
-local CALL = Common.INSTRUCTIONS
+local CALL = INSTRUCTIONS
 
----#inline
 local function call_n16(state)
 	local new_pc = read_n16(state)
 
@@ -54,7 +54,6 @@ CALL[0xDC] = function(state)
 	end
 end
 
----#inline
 local function ret(state)
 	state[REG_PC] = stack_pop16(state)
 end
@@ -92,7 +91,6 @@ CALL[0xD9] = function(state)
 	ret(state)
 end
 
----#inline
 local function call_addr(state, addr)
 	stack_push16(state, state[REG_PC])
 	state[REG_PC] = addr

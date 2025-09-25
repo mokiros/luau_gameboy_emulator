@@ -1,5 +1,4 @@
 local Common = require("./common")
-
 local RAM_READ = Common.MMU_READ
 local RAM_WRITE = Common.MMU_WRITE
 local read_noop = Common.read_noop

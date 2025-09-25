@@ -1,12 +1,11 @@
 local GlobalCommon = require("./common")
-local Common = require("@self/common")
+type GBState = GlobalCommon.GBState
 
+local Common = require("@self/common")
 local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
 local read_noop = Common.read_noop
 local noop = Common.noop
-
-type GBState = GlobalCommon.GBState
 
 local RAM = require("@self/ram")
 local ROM = require("@self/rom")

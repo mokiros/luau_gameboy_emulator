@@ -1,11 +1,12 @@
 local Common = require("./common")
 local r16 = Common.r16
 local stack_push16 = Common.stack_push16
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
 local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 
-local STACK = Common.INSTRUCTIONS
+local STACK = INSTRUCTIONS
 
 STACK[0xC5] = function(state)
 	stack_push16(state, r16(state[REG_B], state[REG_C]))

@@ -2,11 +2,12 @@ local Common = require("./common")
 local r16 = Common.r16
 local read_n8 = Common.read_n8
 local read_e8 = Common.read_e8
+local INSTRUCTIONS = Common.INSTRUCTIONS
 
 local MMU = require("../mmu/common")
 local mmu_read8 = MMU.read8
 
-local ARITH = Common.INSTRUCTIONS
+local ARITH = INSTRUCTIONS
 
 local function flag_z(value)
 	return if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
@@ -16,7 +17,6 @@ local function flag_z(value)
 		else (if value % 0x100 == 0 then 0b1000_0000 else 0)
 end
 
----#inline
 local function add_to_a(state, value)
 	local sum = state[REG_A] + value
 	state[REG_F] = if _G.NO_BRANCHED_EXPRESSIONS and _G.USE_BIT32
@@ -78,7 +78,6 @@ ARITH[0xC6] = function(state)
 	add_to_a(state, read_n8(state))
 end
 
----#inline
 local function adc_to_a(state, value)
 	local carry = (if _G.USE_BIT32 then bit32.extract(state[REG_F], 4) else (state[REG_F] // 0x10) % 2)
 	local sum = state[REG_A] + value + carry
@@ -143,7 +142,6 @@ ARITH[0xCE] = function(state)
 	adc_to_a(state, read_n8(state))
 end
 
----#inline
 local function sub_from_a(state, value)
 	local sum = state[REG_A] - value
 
@@ -209,7 +207,6 @@ ARITH[0xD6] = function(state)
 	sub_from_a(state, read_n8(state))
 end
 
----#inline
 local function sbc_from_a(state, value)
 	local carry = (if _G.USE_BIT32 then bit32.extract(state[REG_F], 4) else (state[REG_F] // 0x10) % 0x2)
 	local sum = state[REG_A] - value - carry
@@ -304,7 +301,6 @@ ARITH[0x27] = function(state)
 		else flag_z(a) + n * 0x40 + (if a > 0xFF or a < 0 then 0x10 else c * 0x10)
 end
 
----#inline
 local function add_to_hl(state, value)
 	local hl = r16(state[REG_H], state[REG_L])
 	local sum = hl + value
