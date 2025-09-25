@@ -2,6 +2,7 @@ local Common = require("./common")
 
 local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
+local read8 = Common.read8
 
 MMU_READ[0xFF40] = function(state)
 	return state[PPU_LCDC]
@@ -48,7 +49,7 @@ end
 MMU_WRITE[0xFF46] = function(state, _, value)
 	local src = bit32.lshift(value, 8)
 	for i = 0, 159 do
-		local byte = Common.read8(state, src + i)
+		local byte = read8(state, src + i)
 		buffer.writeu8(state[MEMORY_OAM], i, byte)
 	end
 	-- TODO: Block memory access during DMA
