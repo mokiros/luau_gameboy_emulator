@@ -3,6 +3,35 @@ local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
 local read8 = Common.read8
 
+local VRAM_SIZE = 2 ^ 13
+local OAM_SIZE = 160
+
+local function vram_read(state, addr)
+	return buffer.readu8(state[MEMORY_VRAM], bit32.band(addr, 0x1FFF))
+end
+
+local function vram_write(state, addr, value)
+	buffer.writeu8(state[MEMORY_VRAM], bit32.band(addr, 0x1FFF), value)
+end
+
+for addr = 0x8000, 0x9FFF do
+	MMU_READ[addr] = vram_read
+	MMU_WRITE[addr] = vram_write
+end
+
+local function oam_read(state, addr)
+	return buffer.readu8(state[MEMORY_OAM], bit32.band(addr, 0x00FF))
+end
+
+local function oam_write(state, addr, value)
+	buffer.writeu8(state[MEMORY_OAM], bit32.band(addr, 0x00FF), value)
+end
+
+for addr = 0xFE00, 0xFE9F do
+	MMU_READ[addr] = oam_read
+	MMU_WRITE[addr] = oam_write
+end
+
 MMU_READ[0xFF40] = function(state)
 	return state[PPU_LCDC]
 end
@@ -94,4 +123,7 @@ MMU_WRITE[0xFF4B] = function(state, _, value)
 	state[PPU_WX] = value
 end
 
-return {}
+return {
+	VRAM_SIZE = VRAM_SIZE,
+	OAM_SIZE = OAM_SIZE,
+}
