@@ -31,7 +31,7 @@ end
 local function step(state: GBState): ()
 	local cycles = z80_step(state)
 	timer_step(state, cycles)
-	ppu_step(state, cycles * 4)
+	ppu_step(state, cycles)
 end
 
 local function run(state: GBState): ()

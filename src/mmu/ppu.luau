@@ -3,6 +3,10 @@ local MMU_READ = Common.MMU_READ
 local MMU_WRITE = Common.MMU_WRITE
 local read8 = Common.read8
 
+local PPU = require("../ppu/common")
+local ppu_update_tile_in_block = PPU.ppu_update_tile_in_block
+local ppu_update_palette = PPU.ppu_update_palette
+
 local VRAM_SIZE = 2 ^ 13
 local OAM_SIZE = 160
 
@@ -14,9 +18,27 @@ local function vram_write(state, addr, value)
 	buffer.writeu8(state[MEMORY_VRAM], bit32.band(addr, 0x1FFF), value)
 end
 
+local function vram_tile_block_write(state, addr, value)
+	vram_write(state, addr, value)
+	local row_addr = bit32.band(addr, 0x1FFE) -- always even address to get the whole line
+	local row_16bits = buffer.readu16(state[MEMORY_VRAM], row_addr)
+	ppu_update_tile_in_block(state, row_addr, row_16bits)
+end
+
+local function vram_tile_map_write(state, addr, value)
+	vram_write(state, addr, value)
+end
+
 for addr = 0x8000, 0x9FFF do
 	MMU_READ[addr] = vram_read
-	MMU_WRITE[addr] = vram_write
+end
+
+for addr = 0x8000, 0x97FF do
+	MMU_WRITE[addr] = vram_tile_block_write
+end
+
+for addr = 0x9800, 0x9FFF do
+	MMU_WRITE[addr] = vram_tile_map_write
 end
 
 local function oam_read(state, addr)
@@ -93,6 +115,7 @@ end
 
 MMU_WRITE[0xFF47] = function(state, _, value)
 	state[PPU_BGP] = value
+	ppu_update_palette(state, value)
 end
 
 MMU_READ[0xFF48] = function(state)

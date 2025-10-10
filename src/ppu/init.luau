@@ -4,12 +4,29 @@ type GBState = GlobalCommon.GBState
 
 local Common = require("@self/common")
 
-local PPU_SCREEN_WIDTH = 160
-local PPU_SCREEN_HEIGHT = 144
-local PPU_BYTES_PER_PIXEL = 4
+local PPU_SCREEN_WIDTH = Common.PPU_SCREEN_WIDTH
+local PPU_SCREEN_HEIGHT = Common.PPU_SCREEN_HEIGHT
+local PPU_BYTES_PER_PIXEL = Common.PPU_BYTES_PER_PIXEL
+
+local DEFAULT_PALETTE = Common.DEFAULT_PALETTE
+
+local PPU_TILE_SIZE = Common.PPU_TILE_SIZE
+local PPU_TILES_PER_BLOCK = Common.PPU_TILES_PER_BLOCK
+local PPU_TILE_BLOCKS = Common.PPU_TILE_BLOCKS
+
+local PPU_TILEMAP_WIDTH = Common.PPU_TILEMAP_WIDTH
+local PPU_TILEMAP_HEIGHT = Common.PPU_TILEMAP_HEIGHT
+
+local bytes_per_tile_row = PPU_TILE_SIZE * PPU_BYTES_PER_PIXEL
+local bytes_per_block_row = bytes_per_tile_row * PPU_TILES_PER_BLOCK
+local bytes_per_all_blocks_row = bytes_per_block_row * PPU_TILE_BLOCKS
+local total_bytes_for_all_blocks = bytes_per_all_blocks_row * PPU_TILE_SIZE
 
 function ppu_init(state: GBState)
 	state[SCREEN_BUFFER] = buffer.create(PPU_SCREEN_WIDTH * PPU_SCREEN_HEIGHT * PPU_BYTES_PER_PIXEL)
+	state[PPU_TILE_BLOCK_BUFFER] = buffer.create(total_bytes_for_all_blocks)
+	-- state[PPU_OBJECT_BUFFER] = buffer.create()
+	state[PPU_PALETTE] = DEFAULT_PALETTE
 	state[PPU_MODECLOCK] = 0
 	state[PPU_MODE] = 0
 	state[PPU_LY] = 0
@@ -25,47 +42,89 @@ end
 
 local function render_scanline(state: GBState)
 	local y = state[PPU_LY]
-	if y >= 144 then
-		return
+	if _G.DEBUG then
+		if y >= PPU_SCREEN_HEIGHT then
+			error(`Tried to render a scanline in the VBLANK area (y value received: {y})`)
+		end
 	end
 
-	for x = 0, 159 do
-		local offset = (y * 160 + x) * 4
-		local r = math.floor((x / 159) * 255)
-		local g = math.floor((y / 143) * 255)
-		local b = math.floor(((x + y) / (159 + 143)) * 255)
-		local a = 0xFF
+	local VRAM = state[MEMORY_VRAM]
+	local TILE_BLOCK_BUFFER = state[PPU_TILE_BLOCK_BUFFER]
+	local SCREEN_BUFFER = state[SCREEN_BUFFER]
 
-		-- The bytes are written in little endian format, so it needs to be backwards
-		buffer.writeu32(state[SCREEN_BUFFER], offset, a * 0x1000000 + b * 0x10000 + g * 0x100 + r)
+	local LCDC = state[PPU_LCDC]
+	local LCDC4 = bit32.extract(LCDC, 4)
+	local LCDC3 = bit32.extract(LCDC, 3)
+
+	local SCX = state[PPU_SCX]
+	local SCY = state[PPU_SCY]
+
+	local tile_index_offset = PPU_TILES_PER_BLOCK * (1 - LCDC4)
+	local tilemap_offset = 0x1800 + LCDC3 * 0x400
+
+	local screen_y = y
+	local screen_line_offset = screen_y * PPU_SCREEN_WIDTH
+	local tilemap_y = SCY + y
+	local tile_y = (tilemap_y // 8) % PPU_TILEMAP_HEIGHT
+	local tile_row = tilemap_y % 8
+
+	local tile_block_line_offset = bytes_per_all_blocks_row * tile_row
+	local tilemap_y_offset = tilemap_offset + tile_y * PPU_TILEMAP_WIDTH
+
+	local start_x = SCX
+	local end_x = SCX + PPU_SCREEN_WIDTH - 1
+
+	local start_tile_x = start_x // 8
+	local end_tile_x = end_x // 8
+
+	for tile_x = start_tile_x, end_tile_x do
+		local tile_pixel_x = tile_x * 8
+		local left_cutoff = math.max(0, start_x - tile_pixel_x)
+		local right_cutoff = math.max(0, (tile_pixel_x + 8) - (end_x + 1))
+		local tile_width = 8 - left_cutoff - right_cutoff
+
+		local tilemap_address = tilemap_y_offset + (tile_x % PPU_TILEMAP_WIDTH)
+		local tile_index_raw = buffer.readu8(VRAM, tilemap_address)
+		local tile_index = (tile_index_raw - tile_index_offset) % 0xFF + tile_index_offset
+
+		local tile_block_offset = tile_block_line_offset + tile_index * bytes_per_tile_row + left_cutoff
+
+		local screen_x = tile_pixel_x - SCX + left_cutoff
+		local screen_buffer_offset = screen_line_offset + screen_x
+		buffer.copy(
+			SCREEN_BUFFER,
+			screen_buffer_offset * PPU_BYTES_PER_PIXEL,
+			TILE_BLOCK_BUFFER,
+			tile_block_offset,
+			tile_width * PPU_BYTES_PER_PIXEL
+		)
 	end
 end
 
 local MODE_TIMINGS = {
-	[PPU_MODE_HBLANK] = 204,
-	[PPU_MODE_VBLANK] = 456,
-	[PPU_MODE_OAM_SCAN] = 80,
-	[PPU_MODE_DRAWING] = 172,
+	[PPU_MODE_HBLANK] = 204 / 4,
+	[PPU_MODE_VBLANK] = 456 / 4,
+	[PPU_MODE_OAM_SCAN] = 80 / 4,
+	[PPU_MODE_DRAWING] = 172 / 4,
 }
 
-function ppu_step(state: GBState, tcycles: number)
-	local clock = state[PPU_MODECLOCK] + tcycles
+local function ppu_step(state: GBState, cycles: number)
+	local clock = state[PPU_MODECLOCK] + cycles
+	state[PPU_MODECLOCK] = clock
 
 	local mode = state[PPU_MODE]
-	local line = state[PPU_LY]
 
 	local mode_timing = MODE_TIMINGS[mode]
 
 	if clock >= mode_timing then
+		clock -= mode_timing
 		if mode == PPU_MODE_OAM_SCAN then
 			state[PPU_MODE] = PPU_MODE_DRAWING
-			clock -= mode_timing
 		elseif mode == PPU_MODE_DRAWING then
 			state[PPU_MODE] = PPU_MODE_HBLANK
-			clock -= mode_timing
 			render_scanline(state)
 		elseif mode == PPU_MODE_HBLANK then
-			clock -= mode_timing
+			local line = state[PPU_LY]
 			state[PPU_LY] = line + 1
 			if line == 144 - 1 then
 				state[PPU_MODE] = PPU_MODE_VBLANK
@@ -73,8 +132,13 @@ function ppu_step(state: GBState, tcycles: number)
 			else
 				state[PPU_MODE] = PPU_MODE_OAM_SCAN
 			end
-		elseif mode == PPU_MODE_VBLANK then
-			clock -= mode_timing
+		else -- if mode == PPU_MODE_VBLANK then
+			if _G.DEBUG then
+				if mode ~= PPU_MODE_VBLANK then
+					error(`Invalid PPU mode: {mode}`)
+				end
+			end
+			local line = state[PPU_LY]
 			state[PPU_LY] = line + 1
 			if line > 153 - 1 then
 				state[PPU_MODE] = PPU_MODE_OAM_SCAN
@@ -82,15 +146,10 @@ function ppu_step(state: GBState, tcycles: number)
 			end
 		end
 	end
-
-	state[PPU_MODECLOCK] = clock
 end
 
 return {
 	Common = Common,
-	SCREEN_WIDTH = PPU_SCREEN_WIDTH,
-	SCREEN_HEIGHT = PPU_SCREEN_HEIGHT,
-	BYTES_PER_PIXEL = PPU_BYTES_PER_PIXEL,
 	init = ppu_init,
 	step = ppu_step,
 }
