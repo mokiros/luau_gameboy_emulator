@@ -421,7 +421,31 @@ CB[0x3F] = function(state)
 	reg_srl(state, REG_A)
 end
 
-local BIT_OPS: { (GBState, number, number) -> () } = {}
+local BIT_OPS: { (GBState, REG_IDX, number) -> () } = {}
+
+local REGISTERS: { REG_IDX } = {
+	REG_B,
+	REG_C,
+	REG_D,
+	REG_E,
+	REG_H,
+	REG_L,
+	REG_HLA,
+	REG_A,
+}
+
+local REGISTER_LOOKUP: { [REG_IDX]: number } = {
+	[REG_B] = 1,
+	[REG_C] = 2,
+	[REG_D] = 3,
+	[REG_E] = 4,
+	[REG_H] = 5,
+	[REG_L] = 6,
+	[REG_HLA] = 7,
+	[REG_A] = 8,
+}
+
+local REG_HLA_INDEX = REGISTER_LOOKUP[REG_HLA]
 
 -- test bit
 BIT_OPS[0b01] = function(state, idx, bit)
@@ -451,12 +475,13 @@ ROTATE[0xCB] = function(state)
 	local op = bit32.rshift(cb_opcode, 6)
 	local bit_idx = bit32.rshift(bit32.band(cb_opcode, 0b00_111_000), 3)
 	local reg_idx = 1 + bit32.band(cb_opcode, 0b00_000_111)
-	if reg_idx == ((REG_HLA :: unknown) :: number) then
+	if reg_idx == REG_HLA_INDEX then
 		read_hla(state)
-		BIT_OPS[op](state, reg_idx, bit_idx)
+		BIT_OPS[op](state, REG_HLA, bit_idx)
 		write_hla(state)
 	else
-		BIT_OPS[op](state, reg_idx, bit_idx)
+		local reg: REG_IDX = REGISTERS[reg_idx]
+		BIT_OPS[op](state, reg, bit_idx)
 	end
 	return cb_opcode
 end
