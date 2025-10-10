@@ -74,6 +74,10 @@ MMU_READ[0xFF45] = function(state)
 	return state[PPU_LYC]
 end
 
+MMU_WRITE[0xFF45] = function(state, _, value)
+	state[PPU_LYC] = value
+end
+
 MMU_WRITE[0xFF46] = function(state, _, value)
 	local src = bit32.lshift(value, 8)
 	for i = 0, 159 do
